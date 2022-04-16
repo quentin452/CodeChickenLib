@@ -38,7 +38,7 @@ public class ModularASMTransformer
                 }
 
                 bytes = createBytes(cnode, writeFlags);
-                if(config.getTag("dump_asm").getBooleanValue(true))
+                if(config.getTag("dump_asm").getBooleanValue(false))
                     dump(bytes, new File("asm/ccl_modular/"+cnode.name.replace('/', '#')+".txt"), false, false);
                 return bytes;
             } catch (RuntimeException e) {
