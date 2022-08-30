@@ -49,7 +49,7 @@ public abstract class WorldExtension
     
     protected final void unloadChunk(Chunk chunk)
     {
-        chunkMap.get(chunk).unload();
+        if (chunkMap.get(chunk) != null) chunkMap.get(chunk).unload();
     }
     
     protected final void loadChunkData(Chunk chunk, NBTTagCompound tag)
