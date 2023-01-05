@@ -6,8 +6,7 @@ import codechicken.lib.render.TextureUtils;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.util.ResourceLocation;
 
-public class Canvas9Seg
-{
+public class Canvas9Seg {
     public final ResourceLocation tex;
     public float[] seg_u = new float[4];
     public float[] seg_v = new float[4];
@@ -24,12 +23,11 @@ public class Canvas9Seg
 
         int marker = 1;
         int prev_col = data.data[0];
-        for(int i = 1; i < size; i++) {
-            if(data.data[i*stride] != prev_col) {
+        for (int i = 1; i < size; i++) {
+            if (data.data[i * stride] != prev_col) {
                 markers[marker] = i;
-                prev_col = data.data[i*stride];
-                if(++marker == 4)
-                    break;
+                prev_col = data.data[i * stride];
+                if (++marker == 4) break;
             }
         }
 
@@ -40,10 +38,9 @@ public class Canvas9Seg
 
     private void parseMarkers(TextureDataHolder data, int stride, int size, int[] sizes, float[] texcoords) {
         int[] markers = readMarkers(data, stride, size);
-        for(int i = 0; i < 4; i++) {
-            texcoords[i] = markers[i]/(float)size;
-            if(i > 0)
-                sizes[i-1] = markers[i]-markers[i-1];
+        for (int i = 0; i < 4; i++) {
+            texcoords[i] = markers[i] / (float) size;
+            if (i > 0) sizes[i - 1] = markers[i] - markers[i - 1];
         }
     }
 
@@ -55,11 +52,12 @@ public class Canvas9Seg
 
     private void drawSeg(int[] sw, int[] sh, int seg) {
         Tessellator t = Tessellator.instance;
-        int u = seg%3; int v = seg/3;
+        int u = seg % 3;
+        int v = seg / 3;
         t.addVertexWithUV(sw[u], sh[v], 0, seg_u[u], seg_v[v]);
-        t.addVertexWithUV(sw[u], sh[v+1], 0, seg_u[u], seg_v[v+1]);
-        t.addVertexWithUV(sw[u+1], sh[v+1], 0, seg_u[u+1], seg_v[v+1]);
-        t.addVertexWithUV(sw[u+1], sh[v], 0, seg_u[u+1], seg_v[v]);
+        t.addVertexWithUV(sw[u], sh[v + 1], 0, seg_u[u], seg_v[v + 1]);
+        t.addVertexWithUV(sw[u + 1], sh[v + 1], 0, seg_u[u + 1], seg_v[v + 1]);
+        t.addVertexWithUV(sw[u + 1], sh[v], 0, seg_u[u + 1], seg_v[v]);
     }
 
     public void draw(int x, int y, int w, int h) {
@@ -67,11 +65,10 @@ public class Canvas9Seg
         CCRenderState.reset();
         CCRenderState.startDrawing();
 
-        int[] sw = new int[]{x, x+seg_w[0], x+w-seg_w[2], x+w};
-        int[] sh = new int[]{y, y+seg_h[0], y+h-seg_h[2], y+h};
+        int[] sw = new int[] {x, x + seg_w[0], x + w - seg_w[2], x + w};
+        int[] sh = new int[] {y, y + seg_h[0], y + h - seg_h[2], y + h};
 
-        for(int seg = 0; seg < 9; seg++)
-            drawSeg(sw, sh, seg);
+        for (int seg = 0; seg < 9; seg++) drawSeg(sw, sh, seg);
 
         CCRenderState.draw();
     }

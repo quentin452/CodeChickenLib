@@ -1,12 +1,10 @@
 package codechicken.lib.vec;
 
 import codechicken.lib.util.Copyable;
+import java.util.Iterator;
 import net.minecraft.util.AxisAlignedBB;
 
-import java.util.Iterator;
-
-public class CuboidCoord implements Iterable<BlockCoord>, Copyable<CuboidCoord>
-{
+public class CuboidCoord implements Iterable<BlockCoord>, Copyable<CuboidCoord> {
     public BlockCoord min;
     public BlockCoord max;
 
@@ -43,10 +41,9 @@ public class CuboidCoord implements Iterable<BlockCoord>, Copyable<CuboidCoord>
     }
 
     public CuboidCoord expand(int side, int amount) {
-        if (side % 2 == 0)//negative side
-            min = min.offset(side, amount);
-        else
-            max = max.offset(side, amount);
+        if (side % 2 == 0) // negative side
+        min = min.offset(side, amount);
+        else max = max.offset(side, amount);
         return this;
     }
 
@@ -61,58 +58,78 @@ public class CuboidCoord implements Iterable<BlockCoord>, Copyable<CuboidCoord>
         max.add(x, y, z);
         return this;
     }
-    
+
     public int size(int s) {
-        switch(s) {
+        switch (s) {
             case 0:
             case 1:
-                return max.y - min.y+1;
+                return max.y - min.y + 1;
             case 2:
             case 3:
-                return max.z - min.z+1;
+                return max.z - min.z + 1;
             case 4:
             case 5:
-                return max.x - min.x+1;
+                return max.x - min.x + 1;
             default:
                 return 0;
         }
     }
 
     public int getSide(int s) {
-        switch(s) {
-            case 0: return min.y;
-            case 1: return max.y;
-            case 2: return min.z;
-            case 3: return max.z;
-            case 4: return min.x;
-            case 5: return max.x;
+        switch (s) {
+            case 0:
+                return min.y;
+            case 1:
+                return max.y;
+            case 2:
+                return min.z;
+            case 3:
+                return max.z;
+            case 4:
+                return min.x;
+            case 5:
+                return max.x;
         }
         throw new IndexOutOfBoundsException("Switch Falloff");
     }
 
     public CuboidCoord setSide(int s, int v) {
-        switch(s) {
-            case 0: min.y = v; break;
-            case 1: max.y = v; break;
-            case 2: min.z = v; break;
-            case 3: max.z = v; break;
-            case 4: min.x = v; break;
-            case 5: max.x = v; break;
-            default: throw new IndexOutOfBoundsException("Switch Falloff");
+        switch (s) {
+            case 0:
+                min.y = v;
+                break;
+            case 1:
+                max.y = v;
+                break;
+            case 2:
+                min.z = v;
+                break;
+            case 3:
+                max.z = v;
+                break;
+            case 4:
+                min.x = v;
+                break;
+            case 5:
+                max.x = v;
+                break;
+            default:
+                throw new IndexOutOfBoundsException("Switch Falloff");
         }
         return this;
     }
 
     public int getVolume() {
-        return (max.x-min.x+1)*(max.y-min.y+1)*(max.z-min.z+1);
+        return (max.x - min.x + 1) * (max.y - min.y + 1) * (max.z - min.z + 1);
     }
 
     public Vector3 getCenterVec() {
-        return new Vector3(min.x+(max.x-min.x+1)/2D, min.y+(max.y-min.y+1)/2D, min.z+(max.z-min.z+1)/2D);
+        return new Vector3(
+                min.x + (max.x - min.x + 1) / 2D, min.y + (max.y - min.y + 1) / 2D, min.z + (max.z - min.z + 1) / 2D);
     }
 
     public BlockCoord getCenter(BlockCoord store) {
-        store.set(min.x+(max.x-min.x)/2, min.y+(max.y-min.y)/2, min.z+(max.z-min.z)/2);
+        store.set(min.x + (max.x - min.x) / 2, min.y + (max.y - min.y) / 2, min.z + (max.z - min.z) / 2);
         return store;
     }
 
@@ -121,13 +138,11 @@ public class CuboidCoord implements Iterable<BlockCoord>, Copyable<CuboidCoord>
     }
 
     public boolean contains(int x, int y, int z) {
-        return x >= min.x && x <= max.x
-                && y >= min.y && y <= max.y
-                && z >= min.z && z <= max.z;
+        return x >= min.x && x <= max.x && y >= min.y && y <= max.y && z >= min.z && z <= max.z;
     }
 
     public int[] intArray() {
-        return new int[]{min.x, min.y, min.z, max.x, max.y, max.z};
+        return new int[] {min.x, min.y, min.z, max.x, max.y, max.z};
     }
 
     public CuboidCoord copy() {
@@ -171,12 +186,12 @@ public class CuboidCoord implements Iterable<BlockCoord>, Copyable<CuboidCoord>
     }
 
     public CuboidCoord include(int x, int y, int z) {
-        if(x < min.x) min.x = x;
-        else if(x > max.x) max.x = x;
-        if(y < min.y) min.y = y;
-        else if(y > max.y) max.y = y;
-        if(z < min.z) min.z = z;
-        else if(z > max.z) max.z = z;
+        if (x < min.x) min.x = x;
+        else if (x > max.x) max.x = x;
+        if (y < min.y) min.y = y;
+        else if (y > max.y) max.y = y;
+        if (z < min.z) min.z = z;
+        else if (z > max.z) max.z = z;
         return this;
     }
 
@@ -189,15 +204,12 @@ public class CuboidCoord implements Iterable<BlockCoord>, Copyable<CuboidCoord>
             }
 
             public BlockCoord next() {
-                if(b == null)
-                    b = min.copy();
+                if (b == null) b = min.copy();
                 else {
-                    if(b.z != max.z)
-                        b.z++;
+                    if (b.z != max.z) b.z++;
                     else {
                         b.z = min.z;
-                        if(b.y != max.y)
-                            b.y++;
+                        if (b.y != max.y) b.y++;
                         else {
                             b.y = min.y;
                             b.x++;

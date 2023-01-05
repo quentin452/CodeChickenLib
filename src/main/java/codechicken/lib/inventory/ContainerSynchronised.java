@@ -1,17 +1,14 @@
 package codechicken.lib.inventory;
 
+import codechicken.lib.packet.PacketCustom;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemStack;
 
-import codechicken.lib.packet.PacketCustom;
-
-public abstract class ContainerSynchronised extends ContainerExtended
-{
+public abstract class ContainerSynchronised extends ContainerExtended {
     private ArrayList<IContainerSyncVar> syncVars = new ArrayList<IContainerSyncVar>();
 
     /**
@@ -39,7 +36,8 @@ public abstract class ContainerSynchronised extends ContainerExtended
     }
 
     @Override
-    public void sendContainerAndContentsToPlayer(Container container, List<ItemStack> list, List<EntityPlayerMP> playerCrafters) {
+    public void sendContainerAndContentsToPlayer(
+            Container container, List<ItemStack> list, List<EntityPlayerMP> playerCrafters) {
         super.sendContainerAndContentsToPlayer(container, list, playerCrafters);
         for (int i = 0; i < syncVars.size(); i++) {
             IContainerSyncVar var = syncVars.get(i);
@@ -47,8 +45,7 @@ public abstract class ContainerSynchronised extends ContainerExtended
             packet.writeByte(i);
             var.writeChange(packet);
             var.reset();
-            for (EntityPlayerMP player : playerCrafters)
-                packet.sendToPlayer(player);
+            for (EntityPlayerMP player : playerCrafters) packet.sendToPlayer(player);
         }
     }
 

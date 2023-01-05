@@ -8,8 +8,7 @@ import net.minecraft.world.IBlockAccess;
 /**
  * Faster precomputed version of LightModel that only works for axis planar sides
  */
-public class SimpleBrightnessModel implements CCRenderState.IVertexOperation
-{
+public class SimpleBrightnessModel implements CCRenderState.IVertexOperation {
     public static final int operationIndex = CCRenderState.registerOperation();
     public static SimpleBrightnessModel instance = new SimpleBrightnessModel();
 
@@ -30,7 +29,8 @@ public class SimpleBrightnessModel implements CCRenderState.IVertexOperation
         if ((sampled & 1 << side) == 0) {
             c.set(pos).offset(side);
             Block block = access.getBlock(c.x, c.y, c.z);
-            samples[side] = access.getLightBrightnessForSkyBlocks(c.x, c.y, c.z, block.getLightValue(access, c.x, c.y, c.z));
+            samples[side] =
+                    access.getLightBrightnessForSkyBlocks(c.x, c.y, c.z, block.getLightValue(access, c.x, c.y, c.z));
             sampled |= 1 << side;
         }
         return samples[side];

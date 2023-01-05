@@ -2,21 +2,17 @@ package codechicken.lib.render;
 
 import codechicken.lib.render.CCRenderState.IVertexOperation;
 import codechicken.lib.render.CCRenderState.VertexAttribute;
-
 import java.util.ArrayList;
 
-public class CCRenderPipeline
-{
-    public class PipelineBuilder
-    {
+public class CCRenderPipeline {
+    public class PipelineBuilder {
         public PipelineBuilder add(IVertexOperation op) {
             ops.add(op);
             return this;
         }
 
         public PipelineBuilder add(IVertexOperation... ops) {
-            for(int i = 0; i < ops.length; i++)
-                CCRenderPipeline.this.ops.add(ops[i]);
+            for (int i = 0; i < ops.length; i++) CCRenderPipeline.this.ops.add(ops[i]);
             return this;
         }
 
@@ -30,17 +26,14 @@ public class CCRenderPipeline
         }
     }
 
-    private class PipelineNode
-    {
+    private class PipelineNode {
         public ArrayList<PipelineNode> deps = new ArrayList<PipelineNode>();
         public IVertexOperation op;
 
         public void add() {
-            if(op == null)
-                return;
+            if (op == null) return;
 
-            for(int i = 0; i < deps.size(); i++)
-                deps.get(i).add();
+            for (int i = 0; i < deps.size(); i++) deps.get(i).add();
             deps.clear();
             sorted.add(op);
             op = null;
@@ -56,8 +49,7 @@ public class CCRenderPipeline
 
     public void setPipeline(IVertexOperation... ops) {
         this.ops.clear();
-        for(int i = 0; i < ops.length; i++)
-            this.ops.add(ops[i]);
+        for (int i = 0; i < ops.length; i++) this.ops.add(ops[i]);
         rebuild();
     }
 
@@ -67,44 +59,34 @@ public class CCRenderPipeline
     }
 
     private void unbuild() {
-        for(int i = 0; i < attribs.size(); i++)
-            attribs.get(i).active = false;
+        for (int i = 0; i < attribs.size(); i++) attribs.get(i).active = false;
         attribs.clear();
         sorted.clear();
     }
 
     public void rebuild() {
-        if(ops.isEmpty() || CCRenderState.model == null)
-            return;
+        if (ops.isEmpty() || CCRenderState.model == null) return;
 
-        //ensure enough nodes for all ops
-        while(nodes.size() < CCRenderState.operationCount())
-            nodes.add(new PipelineNode());
+        // ensure enough nodes for all ops
+        while (nodes.size() < CCRenderState.operationCount()) nodes.add(new PipelineNode());
         unbuild();
 
-        if(CCRenderState.useNormals)
-            addAttribute(CCRenderState.normalAttrib);
-        if(CCRenderState.useColour)
-            addAttribute(CCRenderState.colourAttrib);
-        if(CCRenderState.computeLighting)
-            addAttribute(CCRenderState.lightingAttrib);
+        if (CCRenderState.useNormals) addAttribute(CCRenderState.normalAttrib);
+        if (CCRenderState.useColour) addAttribute(CCRenderState.colourAttrib);
+        if (CCRenderState.computeLighting) addAttribute(CCRenderState.lightingAttrib);
 
-        for(int i = 0; i < ops.size(); i++) {
+        for (int i = 0; i < ops.size(); i++) {
             IVertexOperation op = ops.get(i);
             loading = nodes.get(op.operationID());
             boolean loaded = op.load();
-            if(loaded)
-                loading.op = op;
+            if (loaded) loading.op = op;
 
-            if(op instanceof VertexAttribute)
-                if(loaded)
-                    attribs.add((VertexAttribute)op);
-                else
-                    ((VertexAttribute)op).active = false;
+            if (op instanceof VertexAttribute)
+                if (loaded) attribs.add((VertexAttribute) op);
+                else ((VertexAttribute) op).active = false;
         }
 
-        for(int i = 0; i < nodes.size(); i++)
-            nodes.get(i).add();
+        for (int i = 0; i < nodes.size(); i++) nodes.get(i).add();
     }
 
     public void addRequirement(int opRef) {
@@ -117,15 +99,14 @@ public class CCRenderPipeline
     }
 
     public void addAttribute(VertexAttribute attrib) {
-        if(!attrib.active) {
+        if (!attrib.active) {
             ops.add(attrib);
             attrib.active = true;
         }
     }
 
     public void operate() {
-        for(int i = 0; i < sorted.size(); i++)
-            sorted.get(i).operate();
+        for (int i = 0; i < sorted.size(); i++) sorted.get(i).operate();
     }
 
     public PipelineBuilder builder() {

@@ -1,10 +1,11 @@
 package codechicken.lib.render;
 
-import codechicken.lib.asm.ObfMapping;
 import codechicken.lib.render.SpriteSheetManager.SpriteSheet;
 import codechicken.lib.render.TextureUtils.IIconSelfRegister;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -15,16 +16,13 @@ import net.minecraft.client.resources.data.AnimationMetadataSection;
 import net.minecraft.client.settings.GameSettings;
 import net.minecraft.util.ResourceLocation;
 
-import java.awt.image.BufferedImage;
-import java.util.ArrayList;
-
 @SideOnly(Side.CLIENT)
 public class TextureSpecial extends TextureAtlasSprite implements IIconSelfRegister {
-    //sprite sheet fields
+    // sprite sheet fields
     private int spriteIndex;
     private SpriteSheet spriteSheet;
 
-    //textureFX fields
+    // textureFX fields
     private TextureFX textureFX;
     private int mipmapLevels;
     private int rawWidth;
@@ -41,8 +39,7 @@ public class TextureSpecial extends TextureAtlasSprite implements IIconSelfRegis
     }
 
     public TextureSpecial addTexture(TextureDataHolder t) {
-        if (baseTextures == null)
-            baseTextures = new ArrayList<TextureDataHolder>();
+        if (baseTextures == null) baseTextures = new ArrayList<TextureDataHolder>();
         baseTextures.add(t);
         return this;
     }
@@ -61,8 +58,7 @@ public class TextureSpecial extends TextureAtlasSprite implements IIconSelfRegis
     @Override
     public void initSprite(int sheetWidth, int sheetHeight, int originX, int originY, boolean rotated) {
         super.initSprite(sheetWidth, sheetHeight, originX, originY, rotated);
-        if (textureFX != null)
-            textureFX.onTextureDimensionsUpdate(rawWidth, rawHeight);
+        if (textureFX != null) textureFX.onTextureDimensionsUpdate(rawWidth, rawHeight);
     }
 
     @Override
@@ -79,25 +75,19 @@ public class TextureSpecial extends TextureAtlasSprite implements IIconSelfRegis
         }
     }
 
-
     /**
      * Copy paste mojang code because it's private, and CCL can't have access transformers or reflection
      */
     public int[][] prepareAnisotropicFiltering(int[][] mipmaps) {
-        if (Minecraft.getMinecraft().gameSettings.anisotropicFiltering <= 1)
-        {
+        if (Minecraft.getMinecraft().gameSettings.anisotropicFiltering <= 1) {
             return mipmaps;
-        }
-        else
-        {
+        } else {
             int[][] aint1 = new int[mipmaps.length][];
 
-            for (int k = 0; k < mipmaps.length; ++k)
-            {
+            for (int k = 0; k < mipmaps.length; ++k) {
                 int[] aint2 = mipmaps[k];
 
-                if (aint2 != null)
-                {
+                if (aint2 != null) {
                     int[] aint3 = new int[(rawWidth + 16 >> k) * (rawHeight + 16 >> k)];
                     System.arraycopy(aint2, 0, aint3, 0, aint2.length);
                     aint1[k] = TextureUtil.prepareAnisotropicData(aint3, rawWidth >> k, rawHeight >> k, 8 >> k);
@@ -109,7 +99,8 @@ public class TextureSpecial extends TextureAtlasSprite implements IIconSelfRegis
     }
 
     @Override
-    public void loadSprite(BufferedImage[] images, AnimationMetadataSection animationMeta, boolean anisotropicFiltering) {
+    public void loadSprite(
+            BufferedImage[] images, AnimationMetadataSection animationMeta, boolean anisotropicFiltering) {
         rawWidth = images[0].getWidth();
         rawHeight = images[0].getHeight();
         super.loadSprite(images, animationMeta, anisotropicFiltering);
@@ -128,7 +119,7 @@ public class TextureSpecial extends TextureAtlasSprite implements IIconSelfRegis
 
     public void addFrame(int[] data, int width, int height) {
         GameSettings settings = Minecraft.getMinecraft().gameSettings;
-        BufferedImage[] images = new BufferedImage[settings.mipmapLevels+1];
+        BufferedImage[] images = new BufferedImage[settings.mipmapLevels + 1];
         images[0] = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
         images[0].setRGB(0, 0, width, height, data, 0, width);
 
@@ -138,19 +129,15 @@ public class TextureSpecial extends TextureAtlasSprite implements IIconSelfRegis
     @Override
     public boolean load(IResourceManager manager, ResourceLocation location) {
         if (baseTextures != null) {
-            for (TextureDataHolder tex : baseTextures)
-                addFrame(tex.data, tex.width, tex.height);
-        }
-        else if (spriteSheet != null) {
+            for (TextureDataHolder tex : baseTextures) addFrame(tex.data, tex.width, tex.height);
+        } else if (spriteSheet != null) {
             TextureDataHolder tex = spriteSheet.createSprite(spriteIndex);
             addFrame(tex.data, tex.width, tex.height);
-        }
-        else if (blankSize > 0) {
+        } else if (blankSize > 0) {
             addFrame(new int[blankSize * blankSize], blankSize, blankSize);
         }
 
-        if (framesTextureData.isEmpty())
-            throw new RuntimeException("No base frame for texture: " + getIconName());
+        if (framesTextureData.isEmpty()) throw new RuntimeException("No base frame for texture: " + getIconName());
 
         return false;
     }
@@ -162,8 +149,7 @@ public class TextureSpecial extends TextureAtlasSprite implements IIconSelfRegis
 
     @Override
     public int getFrameCount() {
-        if (textureFX != null)
-            return 1;
+        if (textureFX != null) return 1;
 
         return super.getFrameCount();
     }
@@ -181,8 +167,7 @@ public class TextureSpecial extends TextureAtlasSprite implements IIconSelfRegis
 
     @Override
     public void registerIcons(IIconRegister register) {
-        if (selfRegister)
-            ((TextureMap) register).setTextureEntry(getIconName(), this);
+        if (selfRegister) ((TextureMap) register).setTextureEntry(getIconName(), this);
     }
 
     @Override

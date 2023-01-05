@@ -1,36 +1,28 @@
 package codechicken.lib.tool.module;
 
 import codechicken.lib.tool.ToolMain;
+import java.io.IOException;
 import joptsimple.OptionException;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 
-import java.io.IOException;
-
-public abstract class JOptModule implements ToolMain.Module
-{
+public abstract class JOptModule implements ToolMain.Module {
     OptionParser parser = new OptionParser();
 
     @Override
     public void main(String[] args) {
         OptionSet options;
-        try
-        {
+        try {
             options = parser.parse(args);
-        }
-        catch(OptionException ex)
-        {
+        } catch (OptionException ex) {
             System.err.println(ex.getLocalizedMessage());
             System.exit(-1);
             return;
         }
 
-        try
-        {
+        try {
             main(parser, options);
-        }
-        catch(Exception e)
-        {
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }

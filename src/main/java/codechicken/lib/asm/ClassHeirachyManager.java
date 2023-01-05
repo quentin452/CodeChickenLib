@@ -1,26 +1,23 @@
 package codechicken.lib.asm;
 
 import cpw.mods.fml.common.asm.transformers.deobf.FMLDeobfuscatingRemapper;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import net.minecraft.launchwrapper.IClassTransformer;
 import net.minecraft.launchwrapper.Launch;
 import net.minecraft.launchwrapper.LaunchClassLoader;
 import org.objectweb.asm.tree.ClassNode;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-
 /**
  * This is added as a class transformer if CodeChickenCore is installed. Adding it as a class transformer will speed evaluation up slightly by automatically caching superclasses when they are first loaded.
  */
-public class ClassHeirachyManager implements IClassTransformer
-{
+public class ClassHeirachyManager implements IClassTransformer {
     static {
         ASMInit.init();
     }
 
-    public static class SuperCache
-    {
+    public static class SuperCache {
         String superclass;
         public HashSet<String> parents = new HashSet<String>();
         private boolean flattened;
@@ -30,8 +27,7 @@ public class ClassHeirachyManager implements IClassTransformer
         }
 
         public void flatten() {
-            if (flattened)
-                return;
+            if (flattened) return;
 
             for (String s : new ArrayList<String>(parents)) {
                 SuperCache c = declareClass(s);
@@ -55,7 +51,9 @@ public class ClassHeirachyManager implements IClassTransformer
 
     public static String unKey(String name) {
         if (ObfMapping.obfuscated)
-            name = FMLDeobfuscatingRemapper.INSTANCE.unmap(name.replace('.', '/')).replace('/', '.');
+            name = FMLDeobfuscatingRemapper.INSTANCE
+                    .unmap(name.replace('.', '/'))
+                    .replace('/', '.');
         return name;
     }
 
@@ -68,12 +66,11 @@ public class ClassHeirachyManager implements IClassTransformer
         name = toKey(name);
         superclass = toKey(superclass);
 
-        if (name.equals(superclass))
-            return true;
+        if (name.equals(superclass)) return true;
 
         SuperCache cache = declareClass(name);
-        if (cache == null)//just can't handle this
-            return false;
+        if (cache == null) // just can't handle this
+        return false;
 
         cache.flatten();
         return cache.parents.contains(superclass);
@@ -83,19 +80,15 @@ public class ClassHeirachyManager implements IClassTransformer
         name = toKey(name);
         SuperCache cache = superclasses.get(name);
 
-        if (cache != null)
-            return cache;
+        if (cache != null) return cache;
 
         try {
             byte[] bytes = cl.getClassBytes(unKey(name));
-            if (bytes != null)
-                cache = declareASM(bytes);
+            if (bytes != null) cache = declareASM(bytes);
         } catch (Exception e) {
         }
 
-        if (cache != null)
-            return cache;
-
+        if (cache != null) return cache;
 
         try {
             cache = declareReflection(name);
@@ -109,16 +102,12 @@ public class ClassHeirachyManager implements IClassTransformer
         Class<?> aclass = Class.forName(name);
 
         SuperCache cache = getOrCreateCache(name);
-        if (aclass.isInterface())
-            cache.superclass = "java.lang.Object";
-        else if (name.equals("java.lang.Object"))
-            return cache;
-        else
-            cache.superclass = toKey(aclass.getSuperclass().getName());
+        if (aclass.isInterface()) cache.superclass = "java.lang.Object";
+        else if (name.equals("java.lang.Object")) return cache;
+        else cache.superclass = toKey(aclass.getSuperclass().getName());
 
         cache.add(cache.superclass);
-        for (Class<?> iclass : aclass.getInterfaces())
-            cache.add(toKey(iclass.getName()));
+        for (Class<?> iclass : aclass.getInterfaces()) cache.add(toKey(iclass.getName()));
 
         return cache;
     }
@@ -130,40 +119,34 @@ public class ClassHeirachyManager implements IClassTransformer
         SuperCache cache = getOrCreateCache(name);
         cache.superclass = toKey(node.superName.replace('/', '.'));
         cache.add(cache.superclass);
-        for (String iclass : node.interfaces)
-            cache.add(toKey(iclass.replace('/', '.')));
+        for (String iclass : node.interfaces) cache.add(toKey(iclass.replace('/', '.')));
 
         return cache;
     }
 
     @Override
     public byte[] transform(String name, String tname, byte[] bytes) {
-        if (bytes == null)
-            return null;
+        if (bytes == null) return null;
 
-        if (!superclasses.containsKey(tname))
-            declareASM(bytes);
+        if (!superclasses.containsKey(tname)) declareASM(bytes);
 
         return bytes;
     }
 
     public static SuperCache getOrCreateCache(String name) {
         SuperCache cache = superclasses.get(name);
-        if (cache == null)
-            superclasses.put(name, cache = new SuperCache());
+        if (cache == null) superclasses.put(name, cache = new SuperCache());
         return cache;
     }
 
     public static String getSuperClass(String name, boolean runtime) {
         name = toKey(name);
         SuperCache cache = declareClass(name);
-        if (cache == null)
-            return "java.lang.Object";
+        if (cache == null) return "java.lang.Object";
 
         cache.flatten();
         String s = cache.superclass;
-        if (!runtime)
-            s = FMLDeobfuscatingRemapper.INSTANCE.unmap(s);
+        if (!runtime) s = FMLDeobfuscatingRemapper.INSTANCE.unmap(s);
         return s;
     }
 }

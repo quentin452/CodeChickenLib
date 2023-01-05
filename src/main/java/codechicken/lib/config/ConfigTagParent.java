@@ -6,10 +6,8 @@ import java.io.PrintWriter;
 import java.util.*;
 import java.util.Map.Entry;
 
-public abstract class ConfigTagParent
-{
-    public static class TagOrderComparator implements Comparator<ConfigTag>
-    {
+public abstract class ConfigTagParent {
+    public static class TagOrderComparator implements Comparator<ConfigTag> {
         int sortMode;
 
         public TagOrderComparator(int sortMode) {
@@ -17,18 +15,13 @@ public abstract class ConfigTagParent
         }
 
         public int compare(ConfigTag o1, ConfigTag o2) {
-            if (o1.position != o2.position)
-                return compareInt(o1.position, o2.position);
-            if (o1.brace != o2.brace)
-                return o1.brace ? 1 : -1;//braced one goes after
+            if (o1.position != o2.position) return compareInt(o1.position, o2.position);
+            if (o1.brace != o2.brace) return o1.brace ? 1 : -1; // braced one goes after
             switch (sortMode) {
                 case 1:
-                    if (o1.value == o2.value)
-                        return 0;
-                    if (o1.value == null)
-                        return 1;
-                    if (o2.value == null)
-                        return -1;
+                    if (o1.value == o2.value) return 0;
+                    if (o1.value == null) return 1;
+                    if (o2.value == null) return -1;
                     return o1.value.compareTo(o2.value);
                 default:
                     return o1.name.compareTo(o2.name);
@@ -72,12 +65,9 @@ public abstract class ConfigTagParent
         newlinemode = mode;
         for (Entry<String, ConfigTag> entry : childtags.entrySet()) {
             ConfigTag tag = entry.getValue();
-            if (newlinemode == 0)
-                tag.newline = false;
-            else if (newlinemode == 1)
-                tag.newline = tag.brace;
-            else if (newlinemode == 2)
-                tag.newline = true;
+            if (newlinemode == 0) tag.newline = false;
+            else if (newlinemode == 1) tag.newline = tag.brace;
+            else if (newlinemode == 2) tag.newline = true;
         }
         saveConfig();
         return this;
@@ -104,14 +94,12 @@ public abstract class ConfigTagParent
         String basetagname = dotpos == -1 ? tagname : tagname.substring(0, dotpos);
         ConfigTag basetag = childtags.get(basetagname);
         if (basetag == null) {
-            if (!create)
-                return null;
+            if (!create) return null;
 
             basetag = getNewTag(basetagname);
             saveConfig();
         }
-        if (dotpos == -1)
-            return basetag;
+        if (dotpos == -1) return basetag;
 
         return basetag.getTag(tagname.substring(dotpos + 1), create);
     }
@@ -122,15 +110,13 @@ public abstract class ConfigTagParent
 
     public boolean removeTag(String tagname) {
         ConfigTag tag = getTag(tagname, false);
-        if (tag == null)
-            return false;
+        if (tag == null) return false;
 
         int dotpos = tagname.lastIndexOf(".");
         String lastpart = dotpos == -1 ? tagname : tagname.substring(dotpos + 1, tagname.length());
         if (tag.parent != null) {
             boolean ret = tag.parent.childtags.remove(lastpart) != null;
-            if (ret)
-                saveConfig();
+            if (ret) saveConfig();
             return ret;
         }
 
@@ -143,8 +129,7 @@ public abstract class ConfigTagParent
 
     public <T extends ConfigTag> ArrayList<T> getSortedTagList() {
         ArrayList<T> taglist = new ArrayList<T>(childtags.size());
-        for (Entry<String, ConfigTag> tag : childtags.entrySet())
-            taglist.add((T) tag.getValue());
+        for (Entry<String, ConfigTag> tag : childtags.entrySet()) taglist.add((T) tag.getValue());
 
         Collections.sort(taglist, new TagOrderComparator(sortMode));
         return taglist;
@@ -156,13 +141,10 @@ public abstract class ConfigTagParent
         try {
             while (true) {
                 String line = ConfigFile.readLine(reader);
-                if (line == null)
-                    break;
+                if (line == null) break;
                 if (line.startsWith("#")) {
-                    if (comment.equals(""))
-                        comment = line.substring(1);
-                    else
-                        comment = comment + "\n" + line.substring(1);
+                    if (comment.equals("")) comment = line.substring(1);
+                    else comment = comment + "\n" + line.substring(1);
                 } else if (line.contains("=")) {
                     String qualifiedname = line.substring(0, line.indexOf("="));
                     getTag(qualifiedname)
@@ -197,8 +179,7 @@ public abstract class ConfigTagParent
     public void writeComment(PrintWriter writer, int tabs) {
         if (comment != null && !comment.equals("")) {
             String[] comments = comment.split("\n");
-            for (int i = 0; i < comments.length; i++)
-                ConfigFile.writeLine(writer, "#" + comments[i], tabs);
+            for (int i = 0; i < comments.length; i++) ConfigFile.writeLine(writer, "#" + comments[i], tabs);
         }
     }
 }

@@ -1,7 +1,6 @@
 package codechicken.lib.render.uv;
 
 import codechicken.lib.util.Copyable;
-
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
@@ -11,8 +10,7 @@ public class UV implements Copyable<UV> {
     public double v;
     public int tex;
 
-    public UV() {
-    }
+    public UV() {}
 
     public UV(double u, double v) {
         this(u, v, 0);
@@ -71,8 +69,7 @@ public class UV implements Copyable<UV> {
 
     @Override
     public boolean equals(Object o) {
-        if (!(o instanceof UV))
-            return false;
+        if (!(o instanceof UV)) return false;
         UV uv = (UV) o;
         return u == uv.u && v == uv.v;
     }

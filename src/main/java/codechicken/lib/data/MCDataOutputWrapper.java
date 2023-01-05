@@ -3,6 +3,8 @@ package codechicken.lib.data;
 import codechicken.lib.vec.BlockCoord;
 import com.google.common.base.Charsets;
 import cpw.mods.fml.common.network.ByteBufUtils;
+import java.io.DataOutput;
+import java.io.IOException;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompressedStreamTools;
@@ -10,11 +12,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fluids.FluidStack;
 import org.apache.commons.lang3.Validate;
 
-import java.io.DataOutput;
-import java.io.IOException;
-
-public class MCDataOutputWrapper implements MCDataOutput
-{
+public class MCDataOutputWrapper implements MCDataOutput {
     /**
      * Mimics ByteBufUtils
      * Write an integer using variable length encoding.
@@ -41,11 +39,9 @@ public class MCDataOutputWrapper implements MCDataOutput
     public static void writeVarShort(DataOutput to, int s) throws IOException {
         int low = s & 0x7FFF;
         int high = (s & 0x7F8000) >> 15;
-        if (high != 0)
-            low |= 0x8000;
+        if (high != 0) low |= 0x8000;
         to.writeShort(low);
-        if (high != 0)
-            to.writeByte(high);
+        if (high != 0) to.writeByte(high);
     }
 
     /**
@@ -57,7 +53,8 @@ public class MCDataOutputWrapper implements MCDataOutput
      */
     public static void writeUTF8String(DataOutput to, String string) throws IOException {
         byte[] utf8Bytes = string.getBytes(Charsets.UTF_8);
-        Validate.isTrue(ByteBufUtils.varIntByteCount(utf8Bytes.length) < 3, "The string is too long for this encoding.");
+        Validate.isTrue(
+                ByteBufUtils.varIntByteCount(utf8Bytes.length) < 3, "The string is too long for this encoding.");
         writeVarInt(to, utf8Bytes.length);
         to.write(utf8Bytes);
     }
@@ -203,10 +200,8 @@ public class MCDataOutputWrapper implements MCDataOutput
             writeShort(-1);
         } else {
             writeShort(Item.getIdFromItem(stack.getItem()));
-            if (large)
-                writeInt(stack.stackSize);
-            else
-                writeByte(stack.stackSize);
+            if (large) writeInt(stack.stackSize);
+            else writeByte(stack.stackSize);
             writeShort(stack.getItemDamage());
             writeNBTTagCompound(stack.stackTagCompound);
         }

@@ -1,18 +1,16 @@
 package codechicken.lib.asm;
 
-import org.objectweb.asm.tree.*;
+import static org.objectweb.asm.Opcodes.*;
+import static org.objectweb.asm.tree.AbstractInsnNode.*;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.*;
+import org.objectweb.asm.tree.*;
 
-import static org.objectweb.asm.Opcodes.*;
-import static org.objectweb.asm.tree.AbstractInsnNode.*;
-
-public class ASMReader
-{
+public class ASMReader {
     public static Map<String, Integer> opCodes = new HashMap<String, Integer>();
     public static byte[] TYPE;
 
@@ -175,14 +173,13 @@ public class ASMReader
         opCodes.put("IFNULL", IFNULL);
         opCodes.put("IFNONNULL", IFNONNULL);
 
-        //derived from classWriter, mapped to AbstractInsnNode
+        // derived from classWriter, mapped to AbstractInsnNode
         TYPE = new byte[200];
         String s = "AAAAAAAAAAAAAAAABBJ__CCCCC____________________AAAAAAAACC"
                 + "CCC____________________AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
                 + "AAAAAAAAAAAAAAAAAKAAAAAAAAAAAAAAAAAAAAHHHHHHHHHHHHHHHHCLMAA"
                 + "AAAAEEEEFFFFGDBDAADDAA_NHH";
-        for (int i = 0; i < s.length(); i++)
-            TYPE[i] = (byte) (s.charAt(i) - 'A');
+        for (int i = 0; i < s.length(); i++) TYPE[i] = (byte) (s.charAt(i) - 'A');
     }
 
     public static Map<String, ASMBlock> loadResource(String res) {
@@ -217,10 +214,8 @@ public class ASMReader
                     if (i_opcode == null) {
                         if (split[0].equals("LINENUMBER"))
                             insn = new LineNumberNode(Integer.parseInt(split[1]), block.getOrAdd(split[2]));
-                        else if (split[0].startsWith("L"))
-                            insn = block.getOrAdd(split[0]);
-                        else
-                            throw new Exception("Unknown opcode " + split[0]);
+                        else if (split[0].startsWith("L")) insn = block.getOrAdd(split[0]);
+                        else throw new Exception("Unknown opcode " + split[0]);
                     } else {
                         int opcode = i_opcode;
                         switch (TYPE[opcode]) {
@@ -239,9 +234,10 @@ public class ASMReader
                             case FIELD_INSN:
                             case METHOD_INSN:
                                 StringBuilder sb = new StringBuilder();
-                                for (int i = 1; i < split.length; i++)
-                                    sb.append(split[i]);
-                                insn = ObfMapping.fromDesc(sb.toString()).toClassloading().toInsn(opcode);
+                                for (int i = 1; i < split.length; i++) sb.append(split[i]);
+                                insn = ObfMapping.fromDesc(sb.toString())
+                                        .toClassloading()
+                                        .toInsn(opcode);
                                 break;
                             case INVOKE_DYNAMIC_INSN:
                                 throw new Exception("Found INVOKEDYNAMIC while reading");
@@ -250,20 +246,16 @@ public class ASMReader
                                 break;
                             case LDC_INSN:
                                 String cst = split[1];
-                                if(cst.equals("*"))
-                                    insn = new LdcInsnNode(null);
-                                else if (cst.endsWith("\""))
-                                    insn = new LdcInsnNode(cst.substring(1, cst.length() - 1));
+                                if (cst.equals("*")) insn = new LdcInsnNode(null);
+                                else if (cst.endsWith("\"")) insn = new LdcInsnNode(cst.substring(1, cst.length() - 1));
                                 else if (cst.endsWith("L"))
                                     insn = new LdcInsnNode(Long.valueOf(cst.substring(0, cst.length() - 1)));
                                 else if (cst.endsWith("F"))
                                     insn = new LdcInsnNode(Float.valueOf(cst.substring(0, cst.length() - 1)));
                                 else if (cst.endsWith("D"))
                                     insn = new LdcInsnNode(Double.valueOf(cst.substring(0, cst.length() - 1)));
-                                else if (cst.contains("."))
-                                    insn = new LdcInsnNode(Double.valueOf(cst));
-                                else
-                                    insn = new LdcInsnNode(Integer.valueOf(cst));
+                                else if (cst.contains(".")) insn = new LdcInsnNode(Double.valueOf(cst));
+                                else insn = new LdcInsnNode(Integer.valueOf(cst));
                                 break;
                             case IINC_INSN:
                                 insn = new IincInsnNode(opcode, Integer.parseInt(split[1]));
@@ -281,11 +273,9 @@ public class ASMReader
                         }
                     }
 
-                    if (insn != null)
-                        block.list.add(insn);
+                    if (insn != null) block.list.add(insn);
                 } catch (Exception e) {
-                    System.err.println("Error while reading ASM Block " +
-                            current + " from " + res + ", line: " + line);
+                    System.err.println("Error while reading ASM Block " + current + " from " + res + ", line: " + line);
                     e.printStackTrace();
                 }
             }

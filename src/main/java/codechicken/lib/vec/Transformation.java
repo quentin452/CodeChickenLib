@@ -7,8 +7,8 @@ import cpw.mods.fml.relauncher.SideOnly;
 /**
  * Abstract supertype for any 3D vector transformation
  */
-public abstract class Transformation extends ITransformation<Vector3, Transformation> implements CCRenderState.IVertexOperation
-{
+public abstract class Transformation extends ITransformation<Vector3, Transformation>
+        implements CCRenderState.IVertexOperation {
     public static final int operationIndex = CCRenderState.registerOperation();
 
     /**
@@ -43,8 +43,7 @@ public abstract class Transformation extends ITransformation<Vector3, Transforma
     @Override
     public void operate() {
         apply(CCRenderState.vert.vec);
-        if(CCRenderState.normalAttrib.active)
-            applyN(CCRenderState.normal);
+        if (CCRenderState.normalAttrib.active) applyN(CCRenderState.normal);
     }
 
     @Override
