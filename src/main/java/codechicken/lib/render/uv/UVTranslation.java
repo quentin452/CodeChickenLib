@@ -1,7 +1,6 @@
 package codechicken.lib.render.uv;
 
 import codechicken.lib.math.MathHelper;
-
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
@@ -34,8 +33,8 @@ public class UVTranslation extends UVTransformation {
     @Override
     public UVTransformation merge(UVTransformation next) {
         if (next instanceof UVTranslation) {
-            UVTranslation t = (UVTranslation)next;
-            return new UVTranslation(du+t.du, dv+t.dv);
+            UVTranslation t = (UVTranslation) next;
+            return new UVTranslation(du + t.du, dv + t.dv);
         }
 
         return null;

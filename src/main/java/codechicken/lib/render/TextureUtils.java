@@ -3,6 +3,11 @@ package codechicken.lib.render;
 import codechicken.lib.colour.Colour;
 import codechicken.lib.colour.ColourARGB;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import javax.imageio.ImageIO;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.client.renderer.texture.TextureManager;
@@ -14,16 +19,8 @@ import net.minecraftforge.common.MinecraftForge;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-
-public class TextureUtils
-{
-    public static interface IIconSelfRegister
-    {
+public class TextureUtils {
+    public static interface IIconSelfRegister {
         public void registerIcons(IIconRegister register);
 
         public int atlasIndex();
@@ -42,8 +39,7 @@ public class TextureUtils
     @SubscribeEvent
     public void textureLoad(TextureStitchEvent.Pre event) {
         for (IIconSelfRegister reg : iconRegistrars)
-            if (reg.atlasIndex() == event.map.getTextureType())
-                reg.registerIcons(event.map);
+            if (reg.atlasIndex() == event.map.getTextureType()) reg.registerIcons(event.map);
     }
 
     /**
@@ -56,13 +52,15 @@ public class TextureUtils
     public static Colour[] loadTextureColours(ResourceLocation resource) {
         int[] idata = loadTextureData(resource);
         Colour[] data = new Colour[idata.length];
-        for (int i = 0; i < data.length; i++)
-            data[i] = new ColourARGB(idata[i]);
+        for (int i = 0; i < data.length; i++) data[i] = new ColourARGB(idata[i]);
         return data;
     }
 
     public static InputStream getTextureResource(ResourceLocation textureFile) throws IOException {
-        return Minecraft.getMinecraft().getResourceManager().getResource(textureFile).getInputStream();
+        return Minecraft.getMinecraft()
+                .getResourceManager()
+                .getResource(textureFile)
+                .getInputStream();
     }
 
     public static BufferedImage loadBufferedImage(ResourceLocation textureFile) {
@@ -85,7 +83,17 @@ public class TextureUtils
         return Minecraft.getMinecraft().renderEngine;
     }
 
-    public static void copySubImg(int[] fromTex, int fromWidth, int fromX, int fromY, int width, int height, int[] toTex, int toWidth, int toX, int toY) {
+    public static void copySubImg(
+            int[] fromTex,
+            int fromWidth,
+            int fromX,
+            int fromY,
+            int width,
+            int height,
+            int[] toTex,
+            int toWidth,
+            int toX,
+            int toY) {
         for (int y = 0; y < height; y++)
             for (int x = 0; x < width; x++) {
                 int fp = (y + fromY) * fromWidth + x + fromX;
@@ -112,8 +120,7 @@ public class TextureUtils
     public static TextureSpecial getTextureSpecial(IIconRegister iconRegister, String name) {
         TextureMap textureMap = (TextureMap) iconRegister;
         IIcon entry = textureMap.getTextureExtry(name);
-        if (entry != null)
-            throw new IllegalStateException("Texture: " + name + " is already registered");
+        if (entry != null) throw new IllegalStateException("Texture: " + name + " is already registered");
 
         TextureSpecial icon = new TextureSpecial(name);
         textureMap.setTextureEntry(name, icon);
@@ -136,8 +143,7 @@ public class TextureUtils
 
     public static TextureDataHolder loadTexture(ResourceLocation resource) {
         BufferedImage img = loadBufferedImage(resource);
-        if (img == null)
-            throw new RuntimeException("Texture not found: " + resource);
+        if (img == null) throw new RuntimeException("Texture not found: " + resource);
         return new TextureDataHolder(img);
     }
 
@@ -160,8 +166,7 @@ public class TextureUtils
     }
 
     public static boolean isMissing(IIcon icon, ResourceLocation atlas) {
-        if(icon == null)
-            return true;
+        if (icon == null) return true;
 
         IIcon missing = ((TextureMap) engine().getTexture(atlas)).getAtlasSprite("missingno");
         return icon.getMinU() == missing.getMinU() && icon.getMinV() == missing.getMinV();

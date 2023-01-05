@@ -5,8 +5,7 @@ import codechicken.lib.vec.BlockCoord;
 import net.minecraft.block.Block;
 import net.minecraft.world.IBlockAccess;
 
-public class PlanarLightMatrix extends PlanarLightModel
-{
+public class PlanarLightMatrix extends PlanarLightModel {
     public static final int operationIndex = CCRenderState.registerOperation();
     public static PlanarLightMatrix instance = new PlanarLightMatrix();
 
@@ -28,9 +27,10 @@ public class PlanarLightMatrix extends PlanarLightModel
     }
 
     public int brightness(int side) {
-        if((sampled & 1 << side) == 0) {
+        if ((sampled & 1 << side) == 0) {
             Block b = access.getBlock(pos.x, pos.y, pos.z);
-            brightness[side] = access.getLightBrightnessForSkyBlocks(pos.x, pos.y, pos.z, b.getLightValue(access, pos.x, pos.y, pos.z));
+            brightness[side] = access.getLightBrightnessForSkyBlocks(
+                    pos.x, pos.y, pos.z, b.getLightValue(access, pos.x, pos.y, pos.z));
             sampled |= 1 << side;
         }
         return brightness[side];

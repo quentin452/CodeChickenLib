@@ -5,8 +5,7 @@ import codechicken.lib.util.Copyable;
 import codechicken.lib.vec.Rotation;
 import codechicken.lib.vec.Vector3;
 
-public class LC implements Copyable<LC>
-{
+public class LC implements Copyable<LC> {
     public int side;
     public float fa;
     public float fb;
@@ -40,8 +39,7 @@ public class LC implements Copyable<LC>
 
     public LC compute(Vector3 vec, Vector3 normal) {
         int side = CCModel.findSide(normal);
-        if (side < 0)
-            return set(12, 1, 0, 0, 0);
+        if (side < 0) return set(12, 1, 0, 0, 0);
         return compute(vec, side);
     }
 
@@ -67,8 +65,7 @@ public class LC implements Copyable<LC>
                 offset = vec.x >= 1;
                 break;
         }
-        if (!offset)
-            side += 6;
+        if (!offset) side += 6;
         return computeO(vec, side);
     }
 

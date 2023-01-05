@@ -17,8 +17,7 @@ import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 
-public class InventoryUtils
-{
+public class InventoryUtils {
     /**
      * Constructor for ItemStack with tag
      */
@@ -48,10 +47,8 @@ public class InventoryUtils
                 return item;
             }
             ItemStack itemstack1 = item.splitStack(size);
-            if (item.stackSize == 0)
-                inv.setInventorySlotContents(slot, null);
-            else
-                inv.setInventorySlotContents(slot, item);
+            if (item.stackSize == 0) inv.setInventorySlotContents(slot, null);
+            else inv.setInventorySlotContents(slot, item);
 
             inv.markDirty();
             return itemstack1;
@@ -72,8 +69,7 @@ public class InventoryUtils
      * @return The quantity of items from addition that can be added to base
      */
     public static int incrStackSize(ItemStack base, ItemStack addition) {
-        if (canStack(base, addition))
-            return incrStackSize(base, addition.stackSize);
+        if (canStack(base, addition)) return incrStackSize(base, addition.stackSize);
 
         return 0;
     }
@@ -84,10 +80,8 @@ public class InventoryUtils
     public static int incrStackSize(ItemStack base, int addition) {
         int totalSize = base.stackSize + addition;
 
-        if (totalSize <= base.getMaxStackSize())
-            return addition;
-        else if (base.stackSize < base.getMaxStackSize())
-            return base.getMaxStackSize() - base.stackSize;
+        if (totalSize <= base.getMaxStackSize()) return addition;
+        else if (base.stackSize < base.getMaxStackSize()) return base.getMaxStackSize() - base.stackSize;
 
         return 0;
     }
@@ -110,10 +104,8 @@ public class InventoryUtils
                 tag.setShort("Slot", (short) i);
                 items[i].writeToNBT(tag);
 
-                if (maxQuantity > Short.MAX_VALUE)
-                    tag.setInteger("Quantity", items[i].stackSize);
-                else if (maxQuantity > Byte.MAX_VALUE)
-                    tag.setShort("Quantity", (short) items[i].stackSize);
+                if (maxQuantity > Short.MAX_VALUE) tag.setInteger("Quantity", items[i].stackSize);
+                else if (maxQuantity > Byte.MAX_VALUE) tag.setShort("Quantity", (short) items[i].stackSize);
 
                 tagList.appendTag(tag);
             }
@@ -149,8 +141,7 @@ public class InventoryUtils
      * Copies an itemstack with a new quantity
      */
     public static ItemStack copyStack(ItemStack stack, int quantity) {
-        if (stack == null)
-            return null;
+        if (stack == null) return null;
 
         stack = stack.copy();
         stack.stackSize = quantity;
@@ -163,8 +154,7 @@ public class InventoryUtils
     public static int getInsertibleQuantity(InventoryRange inv, ItemStack stack) {
         int quantity = 0;
         stack = copyStack(stack, Integer.MAX_VALUE);
-        for (int slot : inv.slots)
-            quantity += fitStackInSlot(inv, slot, stack);
+        for (int slot : inv.slots) quantity += fitStackInSlot(inv, slot, stack);
 
         return quantity;
     }
@@ -175,10 +165,11 @@ public class InventoryUtils
 
     public static int fitStackInSlot(InventoryRange inv, int slot, ItemStack stack) {
         ItemStack base = inv.inv.getStackInSlot(slot);
-        if (!canStack(base, stack) || !inv.canInsertItem(slot, stack))
-            return 0;
+        if (!canStack(base, stack) || !inv.canInsertItem(slot, stack)) return 0;
 
-        int fit = base != null ? incrStackSize(base, inv.inv.getInventoryStackLimit() - base.stackSize) : inv.inv.getInventoryStackLimit();
+        int fit = base != null
+                ? incrStackSize(base, inv.inv.getInventoryStackLimit() - base.stackSize)
+                : inv.inv.getInventoryStackLimit();
         return Math.min(fit, stack.stackSize);
     }
 
@@ -195,11 +186,9 @@ public class InventoryUtils
         for (int pass = 0; pass < 2; pass++) {
             for (int slot : inv.slots) {
                 ItemStack base = inv.inv.getStackInSlot(slot);
-                if((pass == 0) == (base == null))
-                    continue;
+                if ((pass == 0) == (base == null)) continue;
                 int fit = fitStackInSlot(inv, slot, stack);
-                if (fit == 0)
-                    continue;
+                if (fit == 0) continue;
 
                 if (base != null) {
                     stack.stackSize -= fit;
@@ -208,12 +197,10 @@ public class InventoryUtils
                         inv.inv.setInventorySlotContents(slot, base);
                     }
                 } else {
-                    if (!simulate)
-                        inv.inv.setInventorySlotContents(slot, copyStack(stack, fit));
+                    if (!simulate) inv.inv.setInventorySlotContents(slot, copyStack(stack, fit));
                     stack.stackSize -= fit;
                 }
-                if (stack.stackSize == 0)
-                    return 0;
+                if (stack.stackSize == 0) return 0;
             }
         }
         return stack.stackSize;
@@ -228,8 +215,7 @@ public class InventoryUtils
      */
     public static ItemStack getExtractableStack(InventoryRange inv, int slot) {
         ItemStack stack = inv.inv.getStackInSlot(slot);
-        if (stack == null || !inv.canExtractItem(slot, stack))
-            return null;
+        if (stack == null || !inv.canExtractItem(slot, stack)) return null;
 
         return stack;
     }
@@ -239,8 +225,7 @@ public class InventoryUtils
     }
 
     public static boolean areStacksIdentical(ItemStack stack1, ItemStack stack2) {
-        if (stack1 == null || stack2 == null)
-            return stack1 == stack2;
+        if (stack1 == null || stack2 == null) return stack1 == stack2;
 
         return stack1.getItem() == stack2.getItem()
                 && stack1.getItemDamage() == stack2.getItemDamage()
@@ -253,32 +238,42 @@ public class InventoryUtils
      */
     public static IInventory getInventory(World world, int x, int y, int z) {
         TileEntity tile = world.getTileEntity(x, y, z);
-        if (!(tile instanceof IInventory))
-            return null;
+        if (!(tile instanceof IInventory)) return null;
 
-        if (tile instanceof TileEntityChest)
-            return getChest((TileEntityChest) tile);
+        if (tile instanceof TileEntityChest) return getChest((TileEntityChest) tile);
         return (IInventory) tile;
-
     }
 
-    public static final ForgeDirection[] chestSides = new ForgeDirection[]{ForgeDirection.WEST, ForgeDirection.EAST, ForgeDirection.NORTH, ForgeDirection.SOUTH};
+    public static final ForgeDirection[] chestSides =
+            new ForgeDirection[] {ForgeDirection.WEST, ForgeDirection.EAST, ForgeDirection.NORTH, ForgeDirection.SOUTH};
 
     public static IInventory getChest(TileEntityChest chest) {
         for (ForgeDirection fside : chestSides) {
-            if (chest.getWorldObj().getBlock(chest.xCoord + fside.offsetX, chest.yCoord + fside.offsetY, chest.zCoord + fside.offsetZ) == chest.getBlockType())
-                return new InventoryLargeChest("container.chestDouble",
-                        (TileEntityChest) chest.getWorldObj().getTileEntity(chest.xCoord + fside.offsetX, chest.yCoord + fside.offsetY, chest.zCoord + fside.offsetZ), chest);
+            if (chest.getWorldObj()
+                            .getBlock(
+                                    chest.xCoord + fside.offsetX,
+                                    chest.yCoord + fside.offsetY,
+                                    chest.zCoord + fside.offsetZ)
+                    == chest.getBlockType())
+                return new InventoryLargeChest(
+                        "container.chestDouble",
+                        (TileEntityChest) chest.getWorldObj()
+                                .getTileEntity(
+                                        chest.xCoord + fside.offsetX,
+                                        chest.yCoord + fside.offsetY,
+                                        chest.zCoord + fside.offsetZ),
+                        chest);
         }
         return chest;
     }
 
     public static boolean canStack(ItemStack stack1, ItemStack stack2) {
-        return stack1 == null || stack2 == null ||
-                (stack1.getItem() == stack2.getItem() &&
-                        (!stack2.getHasSubtypes() || stack2.getItemDamage() == stack1.getItemDamage()) &&
-                        ItemStack.areItemStackTagsEqual(stack2, stack1)) &&
-                        stack1.isStackable();
+        return stack1 == null
+                || stack2 == null
+                || (stack1.getItem() == stack2.getItem()
+                                && (!stack2.getHasSubtypes() || stack2.getItemDamage() == stack1.getItemDamage())
+                                && ItemStack.areItemStackTagsEqual(stack2, stack1))
+                        && stack1.isStackable();
     }
 
     /**
@@ -309,8 +304,7 @@ public class InventoryUtils
     public static void dropOnClose(EntityPlayer player, IInventory inv) {
         for (int i = 0; i < inv.getSizeInventory(); i++) {
             ItemStack stack = inv.getStackInSlotOnClosing(i);
-            if (stack != null)
-                player.dropPlayerItemWithRandomChoice(stack, false);
+            if (stack != null) player.dropPlayerItemWithRandomChoice(stack, false);
         }
     }
 
@@ -324,12 +318,11 @@ public class InventoryUtils
     public static ItemStack loadPersistant(NBTTagCompound tag) {
         String name = tag.getString("name");
         Item item = (Item) Item.itemRegistry.getObject(name);
-        if(item == null) return null;
+        if (item == null) return null;
         int count = tag.hasKey("Count") ? tag.getByte("Count") : 1;
         int damage = tag.hasKey("Damage") ? tag.getShort("Damage") : 0;
         ItemStack stack = new ItemStack(item, count, damage);
-        if(tag.hasKey("tag", 10))
-            stack.stackTagCompound = tag.getCompoundTag("tag");
+        if (tag.hasKey("tag", 10)) stack.stackTagCompound = tag.getCompoundTag("tag");
         return stack;
     }
 }

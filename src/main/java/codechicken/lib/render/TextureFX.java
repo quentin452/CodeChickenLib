@@ -6,8 +6,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.Minecraft;
 
 @SideOnly(Side.CLIENT)
-public class TextureFX
-{
+public class TextureFX {
     public int[] imageData;
     public int tileSizeBase = 16;
     public int tileSizeSquare = 256;
@@ -50,8 +49,7 @@ public class TextureFX
         onTick();
     }
 
-    public void onTick() {
-    }
+    public void onTick() {}
 
     public boolean changed() {
         return true;

@@ -10,8 +10,7 @@ import net.minecraft.world.IBlockAccess;
 /**
  * Note that when using the class as a vertex transformer, the vertices are assumed to be within the BB (x, y, z) -> (x+1, y+1, z+1)
  */
-public class LightMatrix implements CCRenderState.IVertexOperation
-{
+public class LightMatrix implements CCRenderState.IVertexOperation {
     public static final int operationIndex = CCRenderState.registerOperation();
 
     public int computed = 0;
@@ -28,30 +27,34 @@ public class LightMatrix implements CCRenderState.IVertexOperation
     /**
      * The 9 positions in the sample array for each side, sides >= 6 are centered on sample 13 (the block itself)
      */
-    public static final int[][] ssamplem = new int[][]{
-        { 0, 1, 2, 3, 4, 5, 6, 7, 8},
-        {18,19,20,21,22,23,24,25,26},
-        { 0, 9,18, 1,10,19, 2,11,20},
-        { 6,15,24, 7,16,25, 8,17,26},
-        { 0, 3, 6, 9,12,15,18,21,24},
-        { 2, 5, 8,11,14,17,20,23,26},
-        { 9,10,11,12,13,14,15,16,17},
-        { 9,10,11,12,13,14,15,16,17},
-        { 3,12,21, 4,13,22, 5,14,23},
-        { 3,12,21, 4,13,22, 5,14,23},
-        { 1, 4, 7,10,13,16,19,22,25},
-        { 1, 4, 7,10,13,16,19,22,25},
-        {13,13,13,13,13,13,13,13,13}};
-    public static final int[][] qsamplem = new int[][]{//the positions in the side sample array for each corner
-        {0,1,3,4},
-        {5,1,2,4},
-        {6,7,3,4},
-        {5,7,8,4}};
-    public static final float[] sideao = new float[]{
+    public static final int[][] ssamplem = new int[][] {
+        {0, 1, 2, 3, 4, 5, 6, 7, 8},
+        {18, 19, 20, 21, 22, 23, 24, 25, 26},
+        {0, 9, 18, 1, 10, 19, 2, 11, 20},
+        {6, 15, 24, 7, 16, 25, 8, 17, 26},
+        {0, 3, 6, 9, 12, 15, 18, 21, 24},
+        {2, 5, 8, 11, 14, 17, 20, 23, 26},
+        {9, 10, 11, 12, 13, 14, 15, 16, 17},
+        {9, 10, 11, 12, 13, 14, 15, 16, 17},
+        {3, 12, 21, 4, 13, 22, 5, 14, 23},
+        {3, 12, 21, 4, 13, 22, 5, 14, 23},
+        {1, 4, 7, 10, 13, 16, 19, 22, 25},
+        {1, 4, 7, 10, 13, 16, 19, 22, 25},
+        {13, 13, 13, 13, 13, 13, 13, 13, 13}
+    };
+
+    public static final int[][] qsamplem = new int[][] { // the positions in the side sample array for each corner
+        {0, 1, 3, 4},
+        {5, 1, 2, 4},
+        {6, 7, 3, 4},
+        {5, 7, 8, 4}
+    };
+    public static final float[] sideao = new float[] {
         0.5F, 1F, 0.8F, 0.8F, 0.6F, 0.6F,
         0.5F, 1F, 0.8F, 0.8F, 0.6F, 0.6F,
-        1F};
-    
+        1F
+    };
+
     /*static
     {
         int[][] os = new int[][]{
@@ -61,7 +64,7 @@ public class LightMatrix implements CCRenderState.IVertexOperation
                 {0,0, 1},
                 {-1,0,0},
                 { 1,0,0}};
-        
+
         for(int s = 0; s < 12; s++)
         {
             int[] d0 = s < 6 ? new int[]{os[s][0]+1, os[s][1]+1, os[s][2]+1} : new int[]{1, 1, 1};
@@ -110,16 +113,18 @@ public class LightMatrix implements CCRenderState.IVertexOperation
                 int[] qsample = qsamplem[q];
                 if (Minecraft.isAmbientOcclusionEnabled())
                     interp(side, q, ssample[qsample[0]], ssample[qsample[1]], ssample[qsample[2]], ssample[qsample[3]]);
-                else
-                    interp(side, q, ssample[4], ssample[4], ssample[4], ssample[4]);
+                else interp(side, q, ssample[4], ssample[4], ssample[4], ssample[4]);
             }
             computed |= 1 << side;
         }
     }
 
     private void interp(int s, int q, int a, int b, int c, int d) {
-        sample(a); sample(b); sample(c); sample(d);
-        ao[s][q] = interpAO(aSamples[a], aSamples[b], aSamples[c], aSamples[d])*sideao[s];
+        sample(a);
+        sample(b);
+        sample(c);
+        sample(d);
+        ao[s][q] = interpAO(aSamples[a], aSamples[b], aSamples[c], aSamples[d]) * sideao[s];
         brightness[s][q] = interpBrightness(bSamples[a], bSamples[b], bSamples[c], bSamples[d]);
     }
 
@@ -128,19 +133,15 @@ public class LightMatrix implements CCRenderState.IVertexOperation
     }
 
     public static int interpBrightness(int a, int b, int c, int d) {
-        if (a == 0)
-            a = d;
-        if (b == 0)
-            b = d;
-        if (c == 0)
-            c = d;
+        if (a == 0) a = d;
+        if (b == 0) b = d;
+        if (c == 0) c = d;
         return (a + b + c + d) >> 2 & 0xFF00FF;
     }
 
     @Override
     public boolean load() {
-        if(!CCRenderState.computeLighting)
-            return false;
+        if (!CCRenderState.computeLighting) return false;
 
         CCRenderState.pipeline.addDependency(CCRenderState.colourAttrib);
         CCRenderState.pipeline.addDependency(CCRenderState.lightCoordAttrib);
