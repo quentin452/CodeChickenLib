@@ -110,7 +110,7 @@ public class ObfMapping {
             throw new RuntimeException("Failed to select mappings directory, set it manually in the config");
         }
 
-        private static final int DIR_GUESSES = 5;
+        private static final int DIR_GUESSES = 6;
         private static final int DIR_ASKS = 3;
 
         public static File confDirectoryGuess(int i, ConfigTag tag) {
@@ -132,6 +132,9 @@ public class ObfMapping {
                             System.getProperty("user.home"),
                             ".gradle/caches/minecraft/net/minecraftforge/forge/" + FMLInjectionData.data()[4] + "-"
                                     + ForgeVersion.getVersion() + "-" + FMLInjectionData.data()[4] + "/unpacked/conf");
+                case 5:
+                    final String gradleCsvDir = System.getProperty("net.minecraftforge.gradle.GradleStart.csvDir");
+                    return gradleCsvDir != null ? new File(gradleCsvDir) : null;
                 default:
                     JFileChooser fc = new JFileChooser(mcDir);
                     fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
