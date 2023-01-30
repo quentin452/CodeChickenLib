@@ -1,11 +1,14 @@
 package codechicken.lib.colour;
 
-import codechicken.lib.math.MathHelper;
-import codechicken.lib.render.TextureUtils;
 import java.awt.image.BufferedImage;
+
 import net.minecraft.util.ResourceLocation;
 
+import codechicken.lib.math.MathHelper;
+import codechicken.lib.render.TextureUtils;
+
 public class CustomGradient {
+
     public int[] gradient;
 
     public CustomGradient(ResourceLocation textureFile) {

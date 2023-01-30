@@ -1,13 +1,16 @@
 package codechicken.lib.vec;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
+
 import org.lwjgl.opengl.GL11;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+
 public class Scale extends Transformation {
+
     public Vector3 factor;
 
     public Scale(Vector3 factor) {
@@ -61,7 +64,11 @@ public class Scale extends Transformation {
     @Override
     public String toString() {
         MathContext cont = new MathContext(4, RoundingMode.HALF_UP);
-        return "Scale(" + new BigDecimal(factor.x, cont) + ", " + new BigDecimal(factor.y, cont) + ", "
-                + new BigDecimal(factor.z, cont) + ")";
+        return "Scale(" + new BigDecimal(factor.x, cont)
+                + ", "
+                + new BigDecimal(factor.y, cont)
+                + ", "
+                + new BigDecimal(factor.z, cont)
+                + ")";
     }
 }

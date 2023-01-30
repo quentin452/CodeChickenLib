@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 public class UVTransformationList extends UVTransformation {
+
     private ArrayList<UVTransformation> transformations = new ArrayList<UVTransformation>();
 
     public UVTransformationList(UVTransformation... transforms) {
@@ -69,8 +70,7 @@ public class UVTransformationList extends UVTransformation {
     @Override
     public UVTransformation inverse() {
         UVTransformationList rev = new UVTransformationList();
-        for (int i = transformations.size() - 1; i >= 0; i--)
-            rev.with(transformations.get(i).inverse());
+        for (int i = transformations.size() - 1; i >= 0; i--) rev.with(transformations.get(i).inverse());
         return rev;
     }
 

@@ -8,6 +8,7 @@ import net.minecraft.item.ItemStack;
  * Simple IInventory implementation with an array of items, name and maximum stack size
  */
 public class InventorySimple implements IInventory {
+
     public ItemStack[] items;
     public int limit;
     public String name;

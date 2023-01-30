@@ -1,12 +1,14 @@
 package codechicken.lib.render;
 
+import net.minecraft.client.Minecraft;
+
 import codechicken.lib.render.SpriteSheetManager.SpriteSheet;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import net.minecraft.client.Minecraft;
 
 @SideOnly(Side.CLIENT)
 public class TextureFX {
+
     public int[] imageData;
     public int tileSizeBase = 16;
     public int tileSizeSquare = 256;

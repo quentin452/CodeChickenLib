@@ -1,27 +1,10 @@
 package codechicken.lib.packet;
 
-import codechicken.lib.data.MCDataInput;
-import codechicken.lib.data.MCDataOutput;
-import codechicken.lib.vec.BlockCoord;
-import com.google.common.collect.Maps;
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.ModContainer;
-import cpw.mods.fml.common.network.*;
-import cpw.mods.fml.common.network.handshake.NetworkDispatcher;
-import cpw.mods.fml.common.network.internal.FMLProxyPacket;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
-import io.netty.channel.ChannelHandler;
-import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.ChannelInboundHandlerAdapter;
-import io.netty.channel.SimpleChannelInboundHandler;
-import io.netty.util.AttributeKey;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.zip.Deflater;
 import java.util.zip.Inflater;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -41,14 +24,39 @@ import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 
+import codechicken.lib.data.MCDataInput;
+import codechicken.lib.data.MCDataOutput;
+import codechicken.lib.vec.BlockCoord;
+
+import com.google.common.collect.Maps;
+
+import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.ModContainer;
+import cpw.mods.fml.common.network.*;
+import cpw.mods.fml.common.network.handshake.NetworkDispatcher;
+import cpw.mods.fml.common.network.internal.FMLProxyPacket;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
+import io.netty.channel.ChannelHandler;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.ChannelInboundHandlerAdapter;
+import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.util.AttributeKey;
+
 public final class PacketCustom implements MCDataInput, MCDataOutput {
-    public static interface ICustomPacketHandler {}
+
+    public static interface ICustomPacketHandler {
+    }
 
     public interface IClientPacketHandler extends ICustomPacketHandler {
+
         public void handlePacket(PacketCustom packetCustom, Minecraft mc, INetHandlerPlayClient handler);
     }
 
     public interface IServerPacketHandler extends ICustomPacketHandler {
+
         public void handlePacket(PacketCustom packetCustom, EntityPlayerMP sender, INetHandlerPlayServer handler);
     }
 
@@ -56,6 +64,7 @@ public final class PacketCustom implements MCDataInput, MCDataOutput {
 
     @ChannelHandler.Sharable
     public static class CustomInboundHandler extends SimpleChannelInboundHandler<FMLProxyPacket> {
+
         public EnumMap<Side, CustomHandler> handlers = Maps.newEnumMap(Side.class);
 
         @Override
@@ -66,19 +75,20 @@ public final class PacketCustom implements MCDataInput, MCDataOutput {
 
         @Override
         protected void channelRead0(ChannelHandlerContext ctx, FMLProxyPacket msg) throws Exception {
-            handlers.get(ctx.channel().attr(NetworkRegistry.CHANNEL_SOURCE).get())
-                    .handle(
-                            ctx.channel().attr(NetworkRegistry.NET_HANDLER).get(),
-                            ctx.channel().attr(NetworkRegistry.FML_CHANNEL).get(),
-                            new PacketCustom(msg.payload()));
+            handlers.get(ctx.channel().attr(NetworkRegistry.CHANNEL_SOURCE).get()).handle(
+                    ctx.channel().attr(NetworkRegistry.NET_HANDLER).get(),
+                    ctx.channel().attr(NetworkRegistry.FML_CHANNEL).get(),
+                    new PacketCustom(msg.payload()));
         }
     }
 
     private static interface CustomHandler {
+
         public void handle(INetHandler handler, String channel, PacketCustom packet) throws Exception;
     }
 
     public static class ClientInboundHandler implements CustomHandler {
+
         private IClientPacketHandler handler;
 
         public ClientInboundHandler(ICustomPacketHandler handler) {
@@ -94,6 +104,7 @@ public final class PacketCustom implements MCDataInput, MCDataOutput {
     }
 
     public static class ServerInboundHandler implements CustomHandler {
+
         private IServerPacketHandler handler;
 
         public ServerInboundHandler(ICustomPacketHandler handler) {
@@ -102,18 +113,21 @@ public final class PacketCustom implements MCDataInput, MCDataOutput {
 
         @Override
         public void handle(INetHandler netHandler, String channel, PacketCustom packet) throws Exception {
-            if (netHandler instanceof NetHandlerPlayServer)
-                handler.handlePacket(
-                        packet, ((NetHandlerPlayServer) netHandler).playerEntity, (INetHandlerPlayServer) netHandler);
+            if (netHandler instanceof NetHandlerPlayServer) handler.handlePacket(
+                    packet,
+                    ((NetHandlerPlayServer) netHandler).playerEntity,
+                    (INetHandlerPlayServer) netHandler);
             else System.err.println("Invalid INetHandler for PacketCustom on channel: " + channel);
         }
     }
 
     public static interface IHandshakeHandler {
+
         public void handshakeRecieved(NetHandlerPlayServer netHandler);
     }
 
     public static class HandshakeInboundHandler extends ChannelInboundHandlerAdapter {
+
         public IHandshakeHandler handler;
 
         public HandshakeInboundHandler(IHandshakeHandler handler) {
@@ -124,9 +138,7 @@ public final class PacketCustom implements MCDataInput, MCDataOutput {
         public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
             if (evt instanceof NetworkHandshakeEstablished) {
                 INetHandler netHandler = ((NetworkDispatcher) ctx.channel()
-                                .attr(FMLOutboundHandler.FML_MESSAGETARGETARGS)
-                                .get())
-                        .getNetHandler();
+                        .attr(FMLOutboundHandler.FML_MESSAGETARGETARGS).get()).getNetHandler();
                 if (netHandler instanceof NetHandlerPlayServer)
                     handler.handshakeRecieved((NetHandlerPlayServer) netHandler);
             } else ctx.fireUserEventTriggered(evt);
@@ -136,14 +148,12 @@ public final class PacketCustom implements MCDataInput, MCDataOutput {
     public static String channelName(Object channelKey) {
         if (channelKey instanceof String) return (String) channelKey;
 
-        ModContainer mc = channelKey instanceof ModContainer
-                ? (ModContainer) channelKey
+        ModContainer mc = channelKey instanceof ModContainer ? (ModContainer) channelKey
                 : FMLCommonHandler.instance().findContainerFor(channelKey);
         if (mc != null) {
             String s = mc.getModId();
-            if (s.length() > 20)
-                throw new IllegalArgumentException(
-                        "Mod ID (" + s + ") too long for use as channel (20 chars). Use a string identifier");
+            if (s.length() > 20) throw new IllegalArgumentException(
+                    "Mod ID (" + s + ") too long for use as channel (20 chars). Use a string identifier");
             return s;
         }
 
@@ -160,9 +170,7 @@ public final class PacketCustom implements MCDataInput, MCDataOutput {
         String channelName = channelName(channelKey);
         Side side = handler instanceof IServerPacketHandler ? Side.SERVER : Side.CLIENT;
         FMLEmbeddedChannel channel = getOrCreateChannel(channelName, side);
-        channel.attr(cclHandler)
-                .get()
-                .handlers
+        channel.attr(cclHandler).get().handlers
                 .put(side, side == Side.SERVER ? new ServerInboundHandler(handler) : new ClientInboundHandler(handler));
     }
 
@@ -225,7 +233,7 @@ public final class PacketCustom implements MCDataInput, MCDataOutput {
             ByteBuf out = Unpooled.buffer(len + 5);
             int clen = deflater.deflate(out.array(), 5, len);
             if (clen >= len - 5 || !deflater.finished()) // not worth compressing, gets larger
-            return;
+                return;
 
             out.setByte(0, type | 0x80);
             out.setInt(1, len);
@@ -475,7 +483,7 @@ public final class PacketCustom implements MCDataInput, MCDataOutput {
 
     public static void sendToPlayer(Packet packet, EntityPlayer player) {
         if (player == null) sendToClients(packet);
-        else ((EntityPlayerMP) player).playerNetServerHandler.sendPacket(packet);
+        else((EntityPlayerMP) player).playerNetServerHandler.sendPacket(packet);
     }
 
     public void sendToClients() {
@@ -508,14 +516,15 @@ public final class PacketCustom implements MCDataInput, MCDataOutput {
 
     public static void sendToChunk(Packet packet, World world, int chunkX, int chunkZ) {
         PlayerManager playerManager = ((WorldServer) world).getPlayerManager();
-        for (EntityPlayerMP player :
-                (List<EntityPlayerMP>) MinecraftServer.getServer().getConfigurationManager().playerEntityList)
+        for (EntityPlayerMP player : (List<EntityPlayerMP>) MinecraftServer.getServer()
+                .getConfigurationManager().playerEntityList)
             if (playerManager.isPlayerWatchingChunk(player, chunkX, chunkZ)) sendToPlayer(packet, player);
 
-        /* Commented until forge accepts access tranformer request
-        PlayerInstance p = ((WorldServer) world).getPlayerManager().getOrCreateChunkWatcher(chunkX, chunkZ, false);
-        if (p != null)
-            p.sendToAllPlayersWatchingChunk(packet);*/
+        /*
+         * Commented until forge accepts access tranformer request PlayerInstance p = ((WorldServer)
+         * world).getPlayerManager().getOrCreateChunkWatcher(chunkX, chunkZ, false); if (p != null)
+         * p.sendToAllPlayersWatchingChunk(packet);
+         */
     }
 
     public void sendToOps() {
@@ -523,8 +532,8 @@ public final class PacketCustom implements MCDataInput, MCDataOutput {
     }
 
     public static void sendToOps(Packet packet) {
-        for (EntityPlayerMP player :
-                (List<EntityPlayerMP>) MinecraftServer.getServer().getConfigurationManager().playerEntityList)
+        for (EntityPlayerMP player : (List<EntityPlayerMP>) MinecraftServer.getServer()
+                .getConfigurationManager().playerEntityList)
             if (MinecraftServer.getServer().getConfigurationManager().func_152596_g(player.getGameProfile()))
                 sendToPlayer(packet, player);
     }

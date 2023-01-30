@@ -1,11 +1,10 @@
 package codechicken.lib.gui;
 
-import codechicken.lib.math.MathHelper;
-import codechicken.lib.render.CCRenderState;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
@@ -13,12 +12,18 @@ import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.util.ResourceLocation;
+
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 
+import codechicken.lib.math.MathHelper;
+import codechicken.lib.render.CCRenderState;
+
 public class GuiDraw {
+
     public static class GuiHook extends Gui {
+
         public void setZLevel(float f) {
             zLevel = f;
         }
@@ -135,6 +140,7 @@ public class GuiDraw {
     private static List<ITooltipLineHandler> tipLineHandlers = new ArrayList<ITooltipLineHandler>();
 
     public static interface ITooltipLineHandler {
+
         public Dimension getSize();
 
         public void draw(int x, int y);
@@ -166,8 +172,7 @@ public class GuiDraw {
         for (int i = 0; i < list.size(); i++) {
             String s = list.get(i);
             ITooltipLineHandler line = getTipLine(s);
-            Dimension d = line != null
-                    ? line.getSize()
+            Dimension d = line != null ? line.getSize()
                     : new Dimension(
                             font.getStringWidth(s),
                             list.get(i).endsWith(TOOLTIP_LINESPACE) && i + 1 < list.size() ? 12 : 10);

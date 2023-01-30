@@ -1,18 +1,22 @@
 package codechicken.lib.render;
 
-import codechicken.lib.render.TextureUtils.IIconSelfRegister;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import java.util.ArrayList;
 import java.util.HashMap;
+
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.util.IIcon;
 import net.minecraft.util.ResourceLocation;
 
+import codechicken.lib.render.TextureUtils.IIconSelfRegister;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+
 public class SpriteSheetManager {
+
     @SideOnly(Side.CLIENT)
     public static class SpriteSheet implements IIconSelfRegister {
+
         private int tilesX;
         private int tilesY;
         private ArrayList<Integer> newSprites = new ArrayList<Integer>();
@@ -65,9 +69,8 @@ public class SpriteSheetManager {
 
         public IIcon getSprite(int index) {
             IIcon i = sprites[index];
-            if (i == null)
-                throw new IllegalArgumentException(
-                        "Sprite at index: " + index + " from texture file " + resource + " was not preloaded.");
+            if (i == null) throw new IllegalArgumentException(
+                    "Sprite at index: " + index + " from texture file " + resource + " was not preloaded.");
             return i;
         }
 

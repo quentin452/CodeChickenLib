@@ -1,12 +1,7 @@
 package codechicken.lib.raytracer;
 
-import codechicken.lib.math.MathHelper;
-import codechicken.lib.vec.BlockCoord;
-import codechicken.lib.vec.Cuboid6;
-import codechicken.lib.vec.Vector3;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import java.util.List;
+
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
@@ -16,7 +11,15 @@ import net.minecraft.util.MovingObjectPosition.MovingObjectType;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 
+import codechicken.lib.math.MathHelper;
+import codechicken.lib.vec.BlockCoord;
+import codechicken.lib.vec.Cuboid6;
+import codechicken.lib.vec.Vector3;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+
 public class RayTracer {
+
     private Vector3 vec = new Vector3();
     private Vector3 vec2 = new Vector3();
 
@@ -62,17 +65,20 @@ public class RayTracer {
             case 0:
             case 1:
                 if (!MathHelper.between(cuboid.min.x, hit.x, cuboid.max.x)
-                        || !MathHelper.between(cuboid.min.z, hit.z, cuboid.max.z)) return;
+                        || !MathHelper.between(cuboid.min.z, hit.z, cuboid.max.z))
+                    return;
                 break;
             case 2:
             case 3:
                 if (!MathHelper.between(cuboid.min.x, hit.x, cuboid.max.x)
-                        || !MathHelper.between(cuboid.min.y, hit.y, cuboid.max.y)) return;
+                        || !MathHelper.between(cuboid.min.y, hit.y, cuboid.max.y))
+                    return;
                 break;
             case 4:
             case 5:
                 if (!MathHelper.between(cuboid.min.y, hit.y, cuboid.max.y)
-                        || !MathHelper.between(cuboid.min.z, hit.z, cuboid.max.z)) return;
+                        || !MathHelper.between(cuboid.min.z, hit.z, cuboid.max.z))
+                    return;
                 break;
         }
 
@@ -114,8 +120,8 @@ public class RayTracer {
         return c_hit;
     }
 
-    public MovingObjectPosition rayTraceCuboids(
-            Vector3 start, Vector3 end, List<IndexedCuboid6> cuboids, BlockCoord pos, Block block) {
+    public MovingObjectPosition rayTraceCuboids(Vector3 start, Vector3 end, List<IndexedCuboid6> cuboids,
+            BlockCoord pos, Block block) {
         MovingObjectPosition mop = rayTraceCuboids(start, end, cuboids);
         if (mop != null) {
             mop.typeOfHit = MovingObjectType.BLOCK;
@@ -160,8 +166,8 @@ public class RayTracer {
     public static Vec3 getCorrectedHeadVec(EntityPlayer player) {
         Vec3 v = Vec3.createVectorHelper(player.posX, player.posY, player.posZ);
         if (player.worldObj.isRemote) {
-            v.yCoord +=
-                    player.getEyeHeight() - player.getDefaultEyeHeight(); // compatibility with eye height changing mods
+            v.yCoord += player.getEyeHeight() - player.getDefaultEyeHeight(); // compatibility with eye height changing
+                                                                              // mods
         } else {
             v.yCoord += player.getEyeHeight();
             if (player instanceof EntityPlayerMP && player.isSneaking()) v.yCoord -= 0.08;
@@ -174,8 +180,7 @@ public class RayTracer {
     }
 
     public static double getBlockReachDistance(EntityPlayer player) {
-        return player.worldObj.isRemote
-                ? getBlockReachDistance_client()
+        return player.worldObj.isRemote ? getBlockReachDistance_client()
                 : player instanceof EntityPlayerMP ? getBlockReachDistance_server((EntityPlayerMP) player) : 5D;
     }
 

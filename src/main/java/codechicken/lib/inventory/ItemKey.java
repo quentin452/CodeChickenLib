@@ -2,16 +2,18 @@ package codechicken.lib.inventory;
 
 import static codechicken.lib.inventory.InventoryUtils.actualDamage;
 
-import com.google.common.base.Objects;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.oredict.OreDictionary;
 
+import com.google.common.base.Objects;
+
 /**
  * Comparable ItemStack with a hashCode implementation.
  */
 public class ItemKey implements Comparable<ItemKey> {
+
     public ItemStack stack;
     private int hashcode = 0;
 
@@ -37,15 +39,13 @@ public class ItemKey implements Comparable<ItemKey> {
         if (!(obj instanceof ItemKey)) return false;
 
         ItemKey k = (ItemKey) obj;
-        return stack.getItem() == k.stack.getItem()
-                && actualDamage(stack) == actualDamage(k.stack)
+        return stack.getItem() == k.stack.getItem() && actualDamage(stack) == actualDamage(k.stack)
                 && Objects.equal(stack.stackTagCompound, k.stack.stackTagCompound);
     }
 
     @Override
     public int hashCode() {
-        return hashcode != 0
-                ? hashcode
+        return hashcode != 0 ? hashcode
                 : (hashcode = Objects.hashCode(stack.getItem(), actualDamage(stack), stack.stackTagCompound));
     }
 

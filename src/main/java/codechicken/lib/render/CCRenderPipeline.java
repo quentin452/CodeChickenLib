@@ -1,11 +1,14 @@
 package codechicken.lib.render;
 
-import codechicken.lib.render.CCRenderState.IVertexOperation;
-import codechicken.lib.render.CCRenderState.VertexAttribute;
 import java.util.ArrayList;
 
+import codechicken.lib.render.CCRenderState.IVertexOperation;
+import codechicken.lib.render.CCRenderState.VertexAttribute;
+
 public class CCRenderPipeline {
+
     public class PipelineBuilder {
+
         public PipelineBuilder add(IVertexOperation op) {
             ops.add(op);
             return this;
@@ -27,6 +30,7 @@ public class CCRenderPipeline {
     }
 
     private class PipelineNode {
+
         public ArrayList<PipelineNode> deps = new ArrayList<PipelineNode>();
         public IVertexOperation op;
 
@@ -81,9 +85,8 @@ public class CCRenderPipeline {
             boolean loaded = op.load();
             if (loaded) loading.op = op;
 
-            if (op instanceof VertexAttribute)
-                if (loaded) attribs.add((VertexAttribute) op);
-                else ((VertexAttribute) op).active = false;
+            if (op instanceof VertexAttribute) if (loaded) attribs.add((VertexAttribute) op);
+            else((VertexAttribute) op).active = false;
         }
 
         for (int i = 0; i < nodes.size(); i++) nodes.get(i).add();

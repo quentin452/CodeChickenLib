@@ -1,7 +1,5 @@
 package codechicken.lib.inventory;
 
-import codechicken.lib.vec.Vector3;
-import com.google.common.base.Objects;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
@@ -17,7 +15,12 @@ import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 
+import codechicken.lib.vec.Vector3;
+
+import com.google.common.base.Objects;
+
 public class InventoryUtils {
+
     /**
      * Constructor for ItemStack with tag
      */
@@ -167,8 +170,7 @@ public class InventoryUtils {
         ItemStack base = inv.inv.getStackInSlot(slot);
         if (!canStack(base, stack) || !inv.canInsertItem(slot, stack)) return 0;
 
-        int fit = base != null
-                ? incrStackSize(base, inv.inv.getInventoryStackLimit() - base.stackSize)
+        int fit = base != null ? incrStackSize(base, inv.inv.getInventoryStackLimit() - base.stackSize)
                 : inv.inv.getInventoryStackLimit();
         return Math.min(fit, stack.stackSize);
     }
@@ -227,8 +229,7 @@ public class InventoryUtils {
     public static boolean areStacksIdentical(ItemStack stack1, ItemStack stack2) {
         if (stack1 == null || stack2 == null) return stack1 == stack2;
 
-        return stack1.getItem() == stack2.getItem()
-                && stack1.getItemDamage() == stack2.getItemDamage()
+        return stack1.getItem() == stack2.getItem() && stack1.getItemDamage() == stack2.getItemDamage()
                 && stack1.stackSize == stack2.stackSize
                 && Objects.equal(stack1.getTagCompound(), stack2.getTagCompound());
     }
@@ -244,36 +245,30 @@ public class InventoryUtils {
         return (IInventory) tile;
     }
 
-    public static final ForgeDirection[] chestSides =
-            new ForgeDirection[] {ForgeDirection.WEST, ForgeDirection.EAST, ForgeDirection.NORTH, ForgeDirection.SOUTH};
+    public static final ForgeDirection[] chestSides = new ForgeDirection[] { ForgeDirection.WEST, ForgeDirection.EAST,
+            ForgeDirection.NORTH, ForgeDirection.SOUTH };
 
     public static IInventory getChest(TileEntityChest chest) {
         for (ForgeDirection fside : chestSides) {
             if (chest.getWorldObj()
-                            .getBlock(
-                                    chest.xCoord + fside.offsetX,
-                                    chest.yCoord + fside.offsetY,
-                                    chest.zCoord + fside.offsetZ)
+                    .getBlock(chest.xCoord + fside.offsetX, chest.yCoord + fside.offsetY, chest.zCoord + fside.offsetZ)
                     == chest.getBlockType())
                 return new InventoryLargeChest(
                         "container.chestDouble",
-                        (TileEntityChest) chest.getWorldObj()
-                                .getTileEntity(
-                                        chest.xCoord + fside.offsetX,
-                                        chest.yCoord + fside.offsetY,
-                                        chest.zCoord + fside.offsetZ),
+                        (TileEntityChest) chest.getWorldObj().getTileEntity(
+                                chest.xCoord + fside.offsetX,
+                                chest.yCoord + fside.offsetY,
+                                chest.zCoord + fside.offsetZ),
                         chest);
         }
         return chest;
     }
 
     public static boolean canStack(ItemStack stack1, ItemStack stack2) {
-        return stack1 == null
-                || stack2 == null
+        return stack1 == null || stack2 == null
                 || (stack1.getItem() == stack2.getItem()
-                                && (!stack2.getHasSubtypes() || stack2.getItemDamage() == stack1.getItemDamage())
-                                && ItemStack.areItemStackTagsEqual(stack2, stack1))
-                        && stack1.isStackable();
+                        && (!stack2.getHasSubtypes() || stack2.getItemDamage() == stack1.getItemDamage())
+                        && ItemStack.areItemStackTagsEqual(stack2, stack1)) && stack1.isStackable();
     }
 
     /**

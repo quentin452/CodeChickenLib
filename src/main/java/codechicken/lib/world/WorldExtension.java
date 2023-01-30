@@ -1,12 +1,14 @@
 package codechicken.lib.world;
 
 import java.util.HashMap;
+
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 
 public abstract class WorldExtension {
+
     public final World world;
     public HashMap<Chunk, ChunkExtension> chunkMap = new HashMap<Chunk, ChunkExtension>();
 

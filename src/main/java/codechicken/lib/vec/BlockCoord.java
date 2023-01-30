@@ -1,10 +1,12 @@
 package codechicken.lib.vec;
 
-import codechicken.lib.math.MathHelper;
-import codechicken.lib.util.Copyable;
 import net.minecraft.tileentity.TileEntity;
 
+import codechicken.lib.math.MathHelper;
+import codechicken.lib.util.Copyable;
+
 public class BlockCoord implements Comparable<BlockCoord>, Copyable<BlockCoord> {
+
     public int x;
     public int y;
     public int z;
@@ -162,17 +164,11 @@ public class BlockCoord implements Comparable<BlockCoord>, Copyable<BlockCoord> 
         return this;
     }
 
-    public static final BlockCoord[] sideOffsets = new BlockCoord[] {
-        new BlockCoord(0, -1, 0),
-        new BlockCoord(0, 1, 0),
-        new BlockCoord(0, 0, -1),
-        new BlockCoord(0, 0, 1),
-        new BlockCoord(-1, 0, 0),
-        new BlockCoord(1, 0, 0)
-    };
+    public static final BlockCoord[] sideOffsets = new BlockCoord[] { new BlockCoord(0, -1, 0), new BlockCoord(0, 1, 0),
+            new BlockCoord(0, 0, -1), new BlockCoord(0, 0, 1), new BlockCoord(-1, 0, 0), new BlockCoord(1, 0, 0) };
 
     public int[] intArray() {
-        return new int[] {x, y, z};
+        return new int[] { x, y, z };
     }
 
     public BlockCoord copy() {

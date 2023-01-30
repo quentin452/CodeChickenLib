@@ -1,13 +1,16 @@
 package codechicken.lib.vec;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
+
 import org.lwjgl.opengl.GL11;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+
 public class Translation extends Transformation {
+
     public Vector3 vec;
 
     public Translation(Vector3 vec) {
@@ -62,7 +65,11 @@ public class Translation extends Transformation {
     @Override
     public String toString() {
         MathContext cont = new MathContext(4, RoundingMode.HALF_UP);
-        return "Translation(" + new BigDecimal(vec.x, cont) + ", " + new BigDecimal(vec.y, cont) + ", "
-                + new BigDecimal(vec.z, cont) + ")";
+        return "Translation(" + new BigDecimal(vec.x, cont)
+                + ", "
+                + new BigDecimal(vec.y, cont)
+                + ", "
+                + new BigDecimal(vec.z, cont)
+                + ")";
     }
 }

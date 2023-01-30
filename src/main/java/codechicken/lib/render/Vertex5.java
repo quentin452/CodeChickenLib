@@ -1,15 +1,17 @@
 package codechicken.lib.render;
 
+import java.math.BigDecimal;
+import java.math.MathContext;
+import java.math.RoundingMode;
+
 import codechicken.lib.render.uv.UV;
 import codechicken.lib.render.uv.UVTransformation;
 import codechicken.lib.util.Copyable;
 import codechicken.lib.vec.Transformation;
 import codechicken.lib.vec.Vector3;
-import java.math.BigDecimal;
-import java.math.MathContext;
-import java.math.RoundingMode;
 
 public class Vertex5 implements Copyable<Vertex5> {
+
     public Vector3 vec;
     public UV uv;
 
@@ -62,9 +64,19 @@ public class Vertex5 implements Copyable<Vertex5> {
 
     public String toString() {
         MathContext cont = new MathContext(4, RoundingMode.HALF_UP);
-        return "Vertex: (" + new BigDecimal(vec.x, cont) + ", " + new BigDecimal(vec.y, cont) + ", "
-                + new BigDecimal(vec.z, cont) + ") " + "(" + new BigDecimal(uv.u, cont) + ", "
-                + new BigDecimal(uv.v, cont) + ") (" + uv.tex + ")";
+        return "Vertex: (" + new BigDecimal(vec.x, cont)
+                + ", "
+                + new BigDecimal(vec.y, cont)
+                + ", "
+                + new BigDecimal(vec.z, cont)
+                + ") "
+                + "("
+                + new BigDecimal(uv.u, cont)
+                + ", "
+                + new BigDecimal(uv.v, cont)
+                + ") ("
+                + uv.tex
+                + ")";
     }
 
     public Vertex5 apply(Transformation t) {

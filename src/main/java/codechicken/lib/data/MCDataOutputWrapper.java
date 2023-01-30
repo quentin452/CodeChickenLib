@@ -1,24 +1,28 @@
 package codechicken.lib.data;
 
-import codechicken.lib.vec.BlockCoord;
-import com.google.common.base.Charsets;
-import cpw.mods.fml.common.network.ByteBufUtils;
 import java.io.DataOutput;
 import java.io.IOException;
+
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fluids.FluidStack;
+
 import org.apache.commons.lang3.Validate;
 
+import codechicken.lib.vec.BlockCoord;
+
+import com.google.common.base.Charsets;
+import cpw.mods.fml.common.network.ByteBufUtils;
+
 public class MCDataOutputWrapper implements MCDataOutput {
+
     /**
-     * Mimics ByteBufUtils
-     * Write an integer using variable length encoding.
+     * Mimics ByteBufUtils Write an integer using variable length encoding.
      *
      * @param to The buffer to write to
-     * @param i The integer to write
+     * @param i  The integer to write
      */
     public static void writeVarInt(DataOutput to, int i) throws IOException {
         while ((i & 0x80) != 0) {
@@ -30,11 +34,10 @@ public class MCDataOutputWrapper implements MCDataOutput {
     }
 
     /**
-     * Mimics ByteBufUtils
-     * Write an extended short using a short and a byte if necessary
+     * Mimics ByteBufUtils Write an extended short using a short and a byte if necessary
      *
      * @param to The buffer to write to
-     * @param s The short to write, less than 0x7FFFFF
+     * @param s  The short to write, less than 0x7FFFFF
      */
     public static void writeVarShort(DataOutput to, int s) throws IOException {
         int low = s & 0x7FFF;
@@ -45,16 +48,17 @@ public class MCDataOutputWrapper implements MCDataOutput {
     }
 
     /**
-     * Mimics ByteBufUtils
-     * Write a String with UTF8 byte encoding to the buffer.
-     * It is encoded as <varint length>[<UTF8 char bytes>]
-     * @param to the data output to write to
+     * Mimics ByteBufUtils Write a String with UTF8 byte encoding to the buffer. It is encoded as <varint length>[<UTF8
+     * char bytes>]
+     * 
+     * @param to     the data output to write to
      * @param string The string to write
      */
     public static void writeUTF8String(DataOutput to, String string) throws IOException {
         byte[] utf8Bytes = string.getBytes(Charsets.UTF_8);
         Validate.isTrue(
-                ByteBufUtils.varIntByteCount(utf8Bytes.length) < 3, "The string is too long for this encoding.");
+                ByteBufUtils.varIntByteCount(utf8Bytes.length) < 3,
+                "The string is too long for this encoding.");
         writeVarInt(to, utf8Bytes.length);
         to.write(utf8Bytes);
     }

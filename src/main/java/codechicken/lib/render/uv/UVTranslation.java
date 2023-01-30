@@ -1,11 +1,13 @@
 package codechicken.lib.render.uv;
 
-import codechicken.lib.math.MathHelper;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
 
+import codechicken.lib.math.MathHelper;
+
 public class UVTranslation extends UVTransformation {
+
     public double du;
     public double dv;
 

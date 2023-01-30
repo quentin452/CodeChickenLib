@@ -1,19 +1,22 @@
 package codechicken.lib.vec;
 
-import codechicken.lib.util.Copyable;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.DoubleBuffer;
+
 import org.lwjgl.opengl.GL11;
 
+import codechicken.lib.util.Copyable;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+
 public class Matrix4 extends Transformation implements Copyable<Matrix4> {
-    private static DoubleBuffer glBuf =
-            ByteBuffer.allocateDirect(16 * 8).order(ByteOrder.nativeOrder()).asDoubleBuffer();
+
+    private static DoubleBuffer glBuf = ByteBuffer.allocateDirect(16 * 8).order(ByteOrder.nativeOrder())
+            .asDoubleBuffer();
 
     // m<row><column>
     public double m00, m01, m02, m03, m10, m11, m12, m13, m20, m21, m22, m23, m30, m31, m32, m33;
@@ -22,23 +25,8 @@ public class Matrix4 extends Transformation implements Copyable<Matrix4> {
         m00 = m11 = m22 = m33 = 1;
     }
 
-    public Matrix4(
-            double d00,
-            double d01,
-            double d02,
-            double d03,
-            double d10,
-            double d11,
-            double d12,
-            double d13,
-            double d20,
-            double d21,
-            double d22,
-            double d23,
-            double d30,
-            double d31,
-            double d32,
-            double d33) {
+    public Matrix4(double d00, double d01, double d02, double d03, double d10, double d11, double d12, double d13,
+            double d20, double d21, double d22, double d23, double d30, double d31, double d32, double d33) {
         m00 = d00;
         m01 = d01;
         m02 = d02;
@@ -315,14 +303,41 @@ public class Matrix4 extends Transformation implements Copyable<Matrix4> {
     @Override
     public String toString() {
         MathContext cont = new MathContext(4, RoundingMode.HALF_UP);
-        return "[" + new BigDecimal(m00, cont) + "," + new BigDecimal(m01, cont) + "," + new BigDecimal(m02, cont) + ","
-                + new BigDecimal(m03, cont) + "]\n" + "["
-                + new BigDecimal(m10, cont) + "," + new BigDecimal(m11, cont) + "," + new BigDecimal(m12, cont) + ","
-                + new BigDecimal(m13, cont) + "]\n" + "["
-                + new BigDecimal(m20, cont) + "," + new BigDecimal(m21, cont) + "," + new BigDecimal(m22, cont) + ","
-                + new BigDecimal(m23, cont) + "]\n" + "["
-                + new BigDecimal(m30, cont) + "," + new BigDecimal(m31, cont) + "," + new BigDecimal(m32, cont) + ","
-                + new BigDecimal(m33, cont) + "]";
+        return "[" + new BigDecimal(m00, cont)
+                + ","
+                + new BigDecimal(m01, cont)
+                + ","
+                + new BigDecimal(m02, cont)
+                + ","
+                + new BigDecimal(m03, cont)
+                + "]\n"
+                + "["
+                + new BigDecimal(m10, cont)
+                + ","
+                + new BigDecimal(m11, cont)
+                + ","
+                + new BigDecimal(m12, cont)
+                + ","
+                + new BigDecimal(m13, cont)
+                + "]\n"
+                + "["
+                + new BigDecimal(m20, cont)
+                + ","
+                + new BigDecimal(m21, cont)
+                + ","
+                + new BigDecimal(m22, cont)
+                + ","
+                + new BigDecimal(m23, cont)
+                + "]\n"
+                + "["
+                + new BigDecimal(m30, cont)
+                + ","
+                + new BigDecimal(m31, cont)
+                + ","
+                + new BigDecimal(m32, cont)
+                + ","
+                + new BigDecimal(m33, cont)
+                + "]";
     }
 
     public Matrix4 apply(Transformation t) {
@@ -333,22 +348,8 @@ public class Matrix4 extends Transformation implements Copyable<Matrix4> {
     @Override
     @SideOnly(Side.CLIENT)
     public void glApply() {
-        glBuf.put(m00)
-                .put(m10)
-                .put(m20)
-                .put(m30)
-                .put(m01)
-                .put(m11)
-                .put(m21)
-                .put(m31)
-                .put(m02)
-                .put(m12)
-                .put(m22)
-                .put(m32)
-                .put(m03)
-                .put(m13)
-                .put(m23)
-                .put(m33);
+        glBuf.put(m00).put(m10).put(m20).put(m30).put(m01).put(m11).put(m21).put(m31).put(m02).put(m12).put(m22)
+                .put(m32).put(m03).put(m13).put(m23).put(m33);
         glBuf.flip();
         GL11.glMultMatrix(glBuf);
     }

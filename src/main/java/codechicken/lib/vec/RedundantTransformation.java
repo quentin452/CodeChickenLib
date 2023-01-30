@@ -4,6 +4,7 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 public class RedundantTransformation extends Transformation {
+
     @Override
     public void apply(Vector3 vec) {}
 

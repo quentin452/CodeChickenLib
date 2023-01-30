@@ -1,29 +1,37 @@
 package codechicken.lib.asm;
 
-import codechicken.lib.config.ConfigTag;
-import com.google.common.base.Charsets;
-import com.google.common.base.Objects;
-import com.google.common.io.LineProcessor;
-import com.google.common.io.Resources;
-import cpw.mods.fml.common.asm.transformers.deobf.FMLDeobfuscatingRemapper;
-import cpw.mods.fml.relauncher.FMLInjectionData;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+
 import javax.swing.*;
+
 import net.minecraft.launchwrapper.Launch;
 import net.minecraftforge.common.ForgeVersion;
+
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.FieldVisitor;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.commons.Remapper;
 import org.objectweb.asm.tree.*;
 
+import codechicken.lib.config.ConfigTag;
+
+import com.google.common.base.Charsets;
+import com.google.common.base.Objects;
+import com.google.common.io.LineProcessor;
+import com.google.common.io.Resources;
+
+import cpw.mods.fml.common.asm.transformers.deobf.FMLDeobfuscatingRemapper;
+import cpw.mods.fml.relauncher.FMLInjectionData;
+
 public class ObfMapping {
+
     public static class ObfRemapper extends Remapper {
+
         private HashMap<String, String> fields = new HashMap<String, String>();
         private HashMap<String, String> funcs = new HashMap<String, String>();
 
@@ -33,27 +41,20 @@ public class ObfMapping {
                 Field rawMethodMapsField = FMLDeobfuscatingRemapper.class.getDeclaredField("rawMethodMaps");
                 rawFieldMapsField.setAccessible(true);
                 rawMethodMapsField.setAccessible(true);
-                Map<String, Map<String, String>> rawFieldMaps =
-                        (Map<String, Map<String, String>>) rawFieldMapsField.get(FMLDeobfuscatingRemapper.INSTANCE);
-                Map<String, Map<String, String>> rawMethodMaps =
-                        (Map<String, Map<String, String>>) rawMethodMapsField.get(FMLDeobfuscatingRemapper.INSTANCE);
+                Map<String, Map<String, String>> rawFieldMaps = (Map<String, Map<String, String>>) rawFieldMapsField
+                        .get(FMLDeobfuscatingRemapper.INSTANCE);
+                Map<String, Map<String, String>> rawMethodMaps = (Map<String, Map<String, String>>) rawMethodMapsField
+                        .get(FMLDeobfuscatingRemapper.INSTANCE);
 
-                if (rawFieldMaps == null)
-                    throw new IllegalStateException(
-                            "codechicken.lib.asm.ObfMapping loaded too early. Make sure all references are in or after the asm transformer load stage");
+                if (rawFieldMaps == null) throw new IllegalStateException(
+                        "codechicken.lib.asm.ObfMapping loaded too early. Make sure all references are in or after the asm transformer load stage");
 
                 for (Map<String, String> map : rawFieldMaps.values())
-                    for (Entry<String, String> entry : map.entrySet())
-                        if (entry.getValue().startsWith("field"))
-                            fields.put(
-                                    entry.getValue(),
-                                    entry.getKey().substring(0, entry.getKey().indexOf(':')));
+                    for (Entry<String, String> entry : map.entrySet()) if (entry.getValue().startsWith("field"))
+                        fields.put(entry.getValue(), entry.getKey().substring(0, entry.getKey().indexOf(':')));
                 for (Map<String, String> map : rawMethodMaps.values())
-                    for (Entry<String, String> entry : map.entrySet())
-                        if (entry.getValue().startsWith("func"))
-                            funcs.put(
-                                    entry.getValue(),
-                                    entry.getKey().substring(0, entry.getKey().indexOf('(')));
+                    for (Entry<String, String> entry : map.entrySet()) if (entry.getValue().startsWith("func"))
+                        funcs.put(entry.getValue(), entry.getKey().substring(0, entry.getKey().indexOf('(')));
 
             } catch (Exception e) {
                 throw new RuntimeException(e);
@@ -87,9 +88,9 @@ public class ObfMapping {
     }
 
     public static class MCPRemapper extends Remapper implements LineProcessor<Void> {
+
         public static File[] getConfFiles() {
-            ConfigTag tag = ASMHelper.config
-                    .getTag("mappingDir")
+            ConfigTag tag = ASMHelper.config.getTag("mappingDir")
                     .setComment("Path to directory holding packaged.srg, fields.csv and methods.csv for mcp remapping");
             for (int i = 0; i < DIR_GUESSES + DIR_ASKS; i++) {
                 File dir = confDirectoryGuess(i, tag);
@@ -125,13 +126,19 @@ public class ObfMapping {
                 case 3:
                     return new File(
                             System.getProperty("user.home"),
-                            ".gradle/caches/minecraft/net/minecraftforge/forge/" + FMLInjectionData.data()[4] + "-"
-                                    + ForgeVersion.getVersion() + "/unpacked/conf");
+                            ".gradle/caches/minecraft/net/minecraftforge/forge/" + FMLInjectionData.data()[4]
+                                    + "-"
+                                    + ForgeVersion.getVersion()
+                                    + "/unpacked/conf");
                 case 4:
                     return new File(
                             System.getProperty("user.home"),
-                            ".gradle/caches/minecraft/net/minecraftforge/forge/" + FMLInjectionData.data()[4] + "-"
-                                    + ForgeVersion.getVersion() + "-" + FMLInjectionData.data()[4] + "/unpacked/conf");
+                            ".gradle/caches/minecraft/net/minecraftforge/forge/" + FMLInjectionData.data()[4]
+                                    + "-"
+                                    + ForgeVersion.getVersion()
+                                    + "-"
+                                    + FMLInjectionData.data()[4]
+                                    + "/unpacked/conf");
                 case 5:
                     final String gradleCsvDir = System.getProperty("net.minecraftforge.gradle.GradleStart.csvDir");
                     return gradleCsvDir != null ? new File(gradleCsvDir) : null;
@@ -160,7 +167,7 @@ public class ObfMapping {
             File fields = new File(mapDir, "fields.csv");
             if (!fields.exists()) throw new RuntimeException("Could not find fields.csv");
 
-            return new File[] {srgs, methods, fields};
+            return new File[] { srgs, methods, fields };
         }
 
         private HashMap<String, String> fields = new HashMap<String, String>();
@@ -218,8 +225,7 @@ public class ObfMapping {
         boolean obf = true;
         try {
             obf = Launch.classLoader.getClassBytes("net.minecraft.world.World") == null;
-        } catch (IOException ignored) {
-        }
+        } catch (IOException ignored) {}
         obfuscated = obf;
         if (!obf) loadMCPRemapper();
     }

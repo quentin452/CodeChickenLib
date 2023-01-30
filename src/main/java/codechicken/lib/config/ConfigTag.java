@@ -3,7 +3,9 @@ package codechicken.lib.config;
 import java.io.PrintWriter;
 
 public class ConfigTag extends ConfigTagParent {
+
     public interface IConfigType<T> {
+
         public String configValue(T entry);
 
         public T valueOf(String text) throws Exception;
@@ -80,8 +82,7 @@ public class ConfigTag extends ConfigTagParent {
     public int getIntValue(int defaultValue) {
         try {
             if (value != null) return getIntValue();
-        } catch (NumberFormatException ignored) {
-        }
+        } catch (NumberFormatException ignored) {}
 
         setIntValue(defaultValue);
         return defaultValue;
@@ -98,8 +99,7 @@ public class ConfigTag extends ConfigTagParent {
     public boolean getBooleanValue(boolean defaultValue) {
         try {
             if (value != null) return getBooleanValue();
-        } catch (NumberFormatException ignored) {
-        }
+        } catch (NumberFormatException ignored) {}
 
         setBooleanValue(defaultValue);
         return defaultValue;
@@ -112,8 +112,7 @@ public class ConfigTag extends ConfigTagParent {
     public int getHexValue(int defaultValue) {
         try {
             if (value != null) return getHexValue();
-        } catch (NumberFormatException ignored) {
-        }
+        } catch (NumberFormatException ignored) {}
 
         setHexValue(defaultValue);
         return defaultValue;
@@ -130,8 +129,7 @@ public class ConfigTag extends ConfigTagParent {
     public <T> T get(IConfigType<T> type, T defaultValue) {
         try {
             if (value != null) return get(type);
-        } catch (Exception ignored) {
-        }
+        } catch (Exception ignored) {}
 
         set(type, defaultValue);
         return defaultValue;

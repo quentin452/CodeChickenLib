@@ -3,6 +3,7 @@ package codechicken.lib.inventory;
 import codechicken.lib.packet.PacketCustom;
 
 public interface IContainerSyncVar {
+
     public boolean changed();
 
     public void reset();

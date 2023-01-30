@@ -7,7 +7,9 @@ import java.util.*;
 import java.util.Map.Entry;
 
 public abstract class ConfigTagParent {
+
     public static class TagOrderComparator implements Comparator<ConfigTag> {
+
         int sortMode;
 
         public TagOrderComparator(int sortMode) {
@@ -40,8 +42,8 @@ public abstract class ConfigTagParent {
      */
     public int sortMode = 0;
     /**
-     * The mode for determining when child tags should leave a blank line between them and the one above
-     * 0 = never, 1 = when braced, 2 = always
+     * The mode for determining when child tags should leave a blank line between them and the one above 0 = never, 1 =
+     * when braced, 2 = always
      */
     public int newlinemode = 1;
 
@@ -147,9 +149,7 @@ public abstract class ConfigTagParent {
                     else comment = comment + "\n" + line.substring(1);
                 } else if (line.contains("=")) {
                     String qualifiedname = line.substring(0, line.indexOf("="));
-                    getTag(qualifiedname)
-                            .onLoaded()
-                            .setComment(comment)
+                    getTag(qualifiedname).onLoaded().setComment(comment)
                             .setValue(line.substring(line.indexOf("=") + 1));
                     comment = "";
                     bracequalifier = qualifiedname;

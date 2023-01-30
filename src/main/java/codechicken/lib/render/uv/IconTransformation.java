@@ -1,9 +1,11 @@
 package codechicken.lib.render.uv;
 
-import codechicken.lib.vec.IrreversibleTransformationException;
 import net.minecraft.util.IIcon;
 
+import codechicken.lib.vec.IrreversibleTransformationException;
+
 public class IconTransformation extends UVTransformation {
+
     public IIcon icon;
 
     public IconTransformation(IIcon icon) {

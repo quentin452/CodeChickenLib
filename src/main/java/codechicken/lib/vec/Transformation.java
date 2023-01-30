@@ -9,16 +9,19 @@ import cpw.mods.fml.relauncher.SideOnly;
  */
 public abstract class Transformation extends ITransformation<Vector3, Transformation>
         implements CCRenderState.IVertexOperation {
+
     public static final int operationIndex = CCRenderState.registerOperation();
 
     /**
      * Applies this transformation to a normal (doesn't translate)
+     * 
      * @param normal The normal to transform
      */
     public abstract void applyN(Vector3 normal);
 
     /**
      * Applies this transformation to a matrix as a multiplication on the right hand side.
+     * 
      * @param mat The matrix to combine this transformation with
      */
     public abstract void apply(Matrix4 mat);

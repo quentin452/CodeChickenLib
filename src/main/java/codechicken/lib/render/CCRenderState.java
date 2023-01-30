@@ -1,5 +1,13 @@
 package codechicken.lib.render;
 
+import java.util.ArrayList;
+
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.OpenGlHelper;
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.IBlockAccess;
+
 import codechicken.lib.colour.ColourRGBA;
 import codechicken.lib.lighting.LC;
 import codechicken.lib.lighting.LightMatrix;
@@ -7,18 +15,13 @@ import codechicken.lib.util.Copyable;
 import codechicken.lib.vec.Rotation;
 import codechicken.lib.vec.Transformation;
 import codechicken.lib.vec.Vector3;
-import java.util.ArrayList;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.OpenGlHelper;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.IBlockAccess;
 
 /**
- * The core of the CodeChickenLib render system.
- * Rendering operations are written to avoid object allocations by reusing static variables.
+ * The core of the CodeChickenLib render system. Rendering operations are written to avoid object allocations by reusing
+ * static variables.
  */
 public class CCRenderState {
+
     private static int nextOperationIndex;
 
     public static int registerOperation() {
@@ -33,6 +36,7 @@ public class CCRenderState {
      * Represents an operation to be run for each vertex that operates on and modifies the current state
      */
     public static interface IVertexOperation {
+
         /**
          * Load any required references and add dependencies to the pipeline based on the current model (may be null)
          * Return false if this operation is redundant in the pipeline with the given model
@@ -45,8 +49,9 @@ public class CCRenderState {
         public void operate();
 
         /**
-         * Get the unique id representing this type of operation. Duplicate operation IDs within the pipeline may have unexpected results.
-         * ID shoulld be obtained from CCRenderState.registerOperation() and stored in a static variable
+         * Get the unique id representing this type of operation. Duplicate operation IDs within the pipeline may have
+         * unexpected results. ID shoulld be obtained from CCRenderState.registerOperation() and stored in a static
+         * variable
          */
         public int operationID();
     }
@@ -63,15 +68,18 @@ public class CCRenderState {
     }
 
     /**
-     * Management class for a vertex attrute such as colour, normal etc
-     * This class should handle the loading of the attrute from an array provided by IVertexSource.getAttributes or the computation of this attrute from others
+     * Management class for a vertex attrute such as colour, normal etc This class should handle the loading of the
+     * attrute from an array provided by IVertexSource.getAttributes or the computation of this attrute from others
+     * 
      * @param <T> The array type for this attrute eg. int[], Vector3[]
      */
     public abstract static class VertexAttribute<T> implements IVertexOperation {
+
         public final int attributeIndex = registerVertexAttribute(this);
         private final int operationIndex = registerOperation();
         /**
-         * Set to true when the attrute is part of the pipeline. Should only be managed by CCRenderState when constructing the pipeline
+         * Set to true when the attrute is part of the pipeline. Should only be managed by CCRenderState when
+         * constructing the pipeline
          */
         public boolean active = false;
 
@@ -102,18 +110,21 @@ public class CCRenderState {
     }
 
     public static interface IVertexSource {
+
         public Vertex5[] getVertices();
 
         /**
          * Gets an array of vertex attrutes
+         * 
          * @param attr The vertex attrute to get
-         * @param <T> The attrute array type
+         * @param <T>  The attrute array type
          * @return An array, or null if not computed
          */
         public <T> T getAttributes(VertexAttribute<T> attr);
 
         /**
-         * @return True if the specified attrute is provided by this model, either by returning an array from getAttributes or by setting the state in prepareVertex
+         * @return True if the specified attrute is provided by this model, either by returning an array from
+         *         getAttributes or by setting the state in prepareVertex
          */
         public boolean hasAttribute(VertexAttribute<?> attr);
 
@@ -124,6 +135,7 @@ public class CCRenderState {
     }
 
     public static VertexAttribute<Vector3[]> normalAttrib = new VertexAttribute<Vector3[]>() {
+
         private Vector3[] normalRef;
 
         @Override
@@ -151,6 +163,7 @@ public class CCRenderState {
         }
     };
     public static VertexAttribute<int[]> colourAttrib = new VertexAttribute<int[]>() {
+
         private int[] colourRef;
 
         @Override
@@ -171,6 +184,7 @@ public class CCRenderState {
         }
     };
     public static VertexAttribute<int[]> lightingAttrib = new VertexAttribute<int[]>() {
+
         private int[] colourRef;
 
         @Override
@@ -196,6 +210,7 @@ public class CCRenderState {
         }
     };
     public static VertexAttribute<int[]> sideAttrib = new VertexAttribute<int[]>() {
+
         private int[] sideRef;
 
         @Override
@@ -222,6 +237,7 @@ public class CCRenderState {
      * Uses the position of the lightmatrix to compute LC if not provided
      */
     public static VertexAttribute<LC[]> lightCoordAttrib = new VertexAttribute<LC[]>() {
+
         private LC[] lcRef;
         private Vector3 vec = new Vector3(); // for computation
         private Vector3 pos = new Vector3();
@@ -337,12 +353,11 @@ public class CCRenderState {
 
     public static void writeVert() {
         if (hasNormal) Tessellator.instance.setNormal((float) normal.x, (float) normal.y, (float) normal.z);
-        if (hasColour)
-            Tessellator.instance.setColorRGBA(
-                    colour >>> 24,
-                    colour >> 16 & 0xFF,
-                    colour >> 8 & 0xFF,
-                    alphaOverride >= 0 ? alphaOverride : colour & 0xFF);
+        if (hasColour) Tessellator.instance.setColorRGBA(
+                colour >>> 24,
+                colour >> 16 & 0xFF,
+                colour >> 8 & 0xFF,
+                alphaOverride >= 0 ? alphaOverride : colour & 0xFF);
         if (hasBrightness) Tessellator.instance.setBrightness(brightness);
         Tessellator.instance.addVertexWithUV(vert.vec.x, vert.vec.y, vert.vec.z, vert.uv.u, vert.uv.v);
     }
@@ -401,12 +416,11 @@ public class CCRenderState {
 
     public static void startDrawing(int mode) {
         Tessellator.instance.startDrawing(mode);
-        if (hasColour)
-            Tessellator.instance.setColorRGBA(
-                    colour >>> 24,
-                    colour >> 16 & 0xFF,
-                    colour >> 8 & 0xFF,
-                    alphaOverride >= 0 ? alphaOverride : colour & 0xFF);
+        if (hasColour) Tessellator.instance.setColorRGBA(
+                colour >>> 24,
+                colour >> 16 & 0xFF,
+                colour >> 8 & 0xFF,
+                alphaOverride >= 0 ? alphaOverride : colour & 0xFF);
         if (hasBrightness) Tessellator.instance.setBrightness(brightness);
     }
 

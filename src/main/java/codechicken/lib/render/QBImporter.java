@@ -1,21 +1,27 @@
 package codechicken.lib.render;
 
-import codechicken.lib.render.uv.UV;
-import codechicken.lib.render.uv.UVScale;
-import codechicken.lib.vec.*;
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.*;
+
 import javax.imageio.ImageIO;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.util.IIcon;
 import net.minecraft.util.ResourceLocation;
 
+import codechicken.lib.render.uv.UV;
+import codechicken.lib.render.uv.UVScale;
+import codechicken.lib.vec.*;
+
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
+
 public class QBImporter {
+
     private static class ImagePackNode {
+
         Rectangle4i rect;
         ImagePackNode child1;
         ImagePackNode child2;
@@ -83,11 +89,10 @@ public class QBImporter {
 
             while (true) {
                 boolean packed = true;
-                for (QBImage img : images)
-                    if (!node.pack(img)) {
-                        packed = false;
-                        break;
-                    }
+                for (QBImage img : images) if (!node.pack(img)) {
+                    packed = false;
+                    break;
+                }
 
                 if (packed) return node;
 
@@ -108,16 +113,16 @@ public class QBImporter {
                 child2.write(img);
             } else if (packed != null) {
                 ImageTransform t = packed.packT;
-                for (int u = 0; u < rect.w; u++)
-                    for (int v = 0; v < rect.h; v++) {
-                        int rgba = t.access(packed, u, v);
-                        img.setRGB(u + rect.x, v + rect.y, rgba >>> 8 | rgba << 24);
-                    }
+                for (int u = 0; u < rect.w; u++) for (int v = 0; v < rect.h; v++) {
+                    int rgba = t.access(packed, u, v);
+                    img.setRGB(u + rect.x, v + rect.y, rgba >>> 8 | rgba << 24);
+                }
             }
         }
     }
 
     private static class ImageTransform {
+
         int transform;
 
         public ImageTransform(int i) {
@@ -166,6 +171,7 @@ public class QBImporter {
     }
 
     public static class QBImage implements Comparable<QBImage> {
+
         int[][] data;
         ImageTransform packT;
         Rectangle4i packSlot;
@@ -190,16 +196,14 @@ public class QBImporter {
         }
 
         public ImageTransform transformTo(QBImage img) {
-            if (width() == img.width() && height() == img.height())
-                for (int i = 0; i < 4; i++) {
-                    ImageTransform t = new ImageTransform(i);
-                    if (equals(img, t)) return t;
-                }
-            if (width() == img.height() && height() == img.width())
-                for (int i = 4; i < 8; i++) {
-                    ImageTransform t = new ImageTransform(i);
-                    if (equals(img, t)) return t;
-                }
+            if (width() == img.width() && height() == img.height()) for (int i = 0; i < 4; i++) {
+                ImageTransform t = new ImageTransform(i);
+                if (equals(img, t)) return t;
+            }
+            if (width() == img.height() && height() == img.width()) for (int i = 4; i < 8; i++) {
+                ImageTransform t = new ImageTransform(i);
+                if (equals(img, t)) return t;
+            }
             return null;
         }
 
@@ -220,13 +224,10 @@ public class QBImporter {
     }
 
     private static final int[][] vertOrder = new int[][] { // clockwise because MC is left handed
-        {3, 0},
-        {1, 0},
-        {1, 2},
-        {3, 2}
-    };
+            { 3, 0 }, { 1, 0 }, { 1, 2 }, { 3, 2 } };
 
     public static class QBQuad {
+
         public Vertex5[] verts = new Vertex5[4];
         public QBImage image = new QBImage();
         public ImageTransform t = new ImageTransform();
@@ -247,8 +248,7 @@ public class QBImporter {
             QBQuad quad = new QBQuad(side);
             quad.image = img;
 
-            Transformation t = new Scale(-1, 1, -1)
-                    .with(Rotation.sideOrientation(side, 0))
+            Transformation t = new Scale(-1, 1, -1).with(Rotation.sideOrientation(side, 0))
                     .with(new Translation(new Vector3().setSide(side, d)));
             quad.verts[0] = new Vertex5(flat.x, 0, flat.y, 0, 0);
             quad.verts[1] = new Vertex5(flat.x + flat.w, 0, flat.y, 1, 0);
@@ -268,6 +268,7 @@ public class QBImporter {
     }
 
     public static class QBCuboid {
+
         public QBMatrix mat;
         public CuboidCoord c;
         public int sides;
@@ -281,8 +282,7 @@ public class QBImporter {
         public static boolean intersects(QBCuboid a, QBCuboid b) {
             CuboidCoord c = a.c;
             CuboidCoord d = b.c;
-            return c.min.x <= d.max.x
-                    && d.min.x <= c.max.x
+            return c.min.x <= d.max.x && d.min.x <= c.max.x
                     && c.min.y <= d.max.y
                     && d.min.y <= c.max.y
                     && c.min.z <= d.max.z
@@ -301,8 +301,7 @@ public class QBImporter {
             for (int a = 0; a < 6; a += 2) {
                 int a1 = (a + 2) % 6;
                 int a2 = (a + 4) % 6;
-                if (c.getSide(a1 + 1) <= d.getSide(a1 + 1)
-                        && c.getSide(a1) >= d.getSide(a1)
+                if (c.getSide(a1 + 1) <= d.getSide(a1 + 1) && c.getSide(a1) >= d.getSide(a1)
                         && c.getSide(a2 + 1) <= d.getSide(a2 + 1)
                         && c.getSide(a2) >= d.getSide(a2)) {
 
@@ -350,16 +349,16 @@ public class QBImporter {
             BlockCoord b = BlockCoord.fromAxes(ia);
             BlockCoord bU = BlockCoord.sideOffsets[sideU];
             BlockCoord bV = BlockCoord.sideOffsets[sideV];
-            for (int u = 0; u < image.width(); u++)
-                for (int v = 0; v < image.height(); v++)
-                    image.data[u][v] =
-                            mat.matrix[b.x + bU.x * u + bV.x * v][b.y + bU.y * u + bV.y * v][b.z + bU.z * u + bV.z * v];
+            for (int u = 0; u < image.width(); u++) for (int v = 0; v < image.height(); v++)
+                image.data[u][v] = mat.matrix[b.x + bU.x * u + bV.x * v][b.y + bU.y * u + bV.y * v][b.z + bU.z * u
+                        + bV.z * v];
 
             return quad;
         }
     }
 
     public static class QBMatrix {
+
         public String name;
         public BlockCoord pos;
         public BlockCoord size;
@@ -395,12 +394,10 @@ public class QBImporter {
         }
 
         public void convertBGRAtoRGBA() {
-            for (int z = 0; z < size.z; z++)
-                for (int y = 0; y < size.y; y++)
-                    for (int x = 0; x < size.x; x++) {
-                        int i = matrix[x][y][z];
-                        matrix[x][y][z] = Integer.reverseBytes(i >>> 8) | i & 0xFF;
-                    }
+            for (int z = 0; z < size.z; z++) for (int y = 0; y < size.y; y++) for (int x = 0; x < size.x; x++) {
+                int i = matrix[x][y][z];
+                matrix[x][y][z] = Integer.reverseBytes(i >>> 8) | i & 0xFF;
+            }
         }
 
         private boolean voxelFull(boolean[][][] solid, CuboidCoord c) {
@@ -434,10 +431,8 @@ public class QBImporter {
             for (int z = 0; z < size.z; z++)
                 for (int y = 0; y < size.y; y++) for (int x = 0; x < size.x; x++) solid[x][y][z] = matrix[x][y][z] != 0;
 
-            for (int x = 0; x < size.x; x++)
-                for (int z = 0; z < size.z; z++)
-                    for (int y = 0; y < size.y; y++)
-                        if (solid[x][y][z]) list.add(expand(solid, new BlockCoord(x, y, z)));
+            for (int x = 0; x < size.x; x++) for (int z = 0; z < size.z; z++)
+                for (int y = 0; y < size.y; y++) if (solid[x][y][z]) list.add(expand(solid, new BlockCoord(x, y, z)));
 
             for (int i = 0; i < list.size(); i++)
                 for (int j = i + 1; j < list.size(); j++) QBCuboid.clip(list.get(i), list.get(j));
@@ -468,9 +463,8 @@ public class QBImporter {
 
                 int side = key & 7;
                 Rectangle4i rect = null;
-                for (QBQuad q : plane)
-                    if (rect == null) rect = q.flatten();
-                    else rect.include(q.flatten());
+                for (QBQuad q : plane) if (rect == null) rect = q.flatten();
+                else rect.include(q.flatten());
 
                 QBImage img = new QBImage();
                 img.data = new int[rect.w][rect.h];
@@ -528,6 +522,7 @@ public class QBImporter {
     public static final int SCALEMC = 8;
 
     public static class QBModel {
+
         public QBMatrix[] matrices;
         public boolean rightHanded;
 
@@ -551,8 +546,7 @@ public class QBImporter {
                 }
             }
 
-            if (mergeTextures)
-                images.add(ImagePackNode.pack(qbImages, squareTextures).toImage());
+            if (mergeTextures) images.add(ImagePackNode.pack(qbImages, squareTextures).toImage());
 
             RasterisedModel m = new RasterisedModel(images);
             for (int i = 0; i < matrices.length; i++) {
@@ -565,7 +559,9 @@ public class QBImporter {
     }
 
     public static class RasterisedModel {
+
         private class Holder {
+
             CCModel m;
             int img;
 
@@ -594,9 +590,10 @@ public class QBImporter {
 
         public IIcon getIcon(String key, IIconRegister r, String iconName) {
             int img = map.get(key).img;
-            if (icons[img] != null && !iconName.equals(icons[img]))
-                throw new IllegalArgumentException("Attempted to get a previously registered icon by a different name: "
-                        + icons[img] + ", " + iconName);
+            if (icons[img] != null && !iconName.equals(icons[img])) throw new IllegalArgumentException(
+                    "Attempted to get a previously registered icon by a different name: " + icons[img]
+                            + ", "
+                            + iconName);
             if (icons[img] != null) return r.registerIcon(iconName);
 
             icons[img] = iconName;
@@ -622,9 +619,8 @@ public class QBImporter {
 
                 if (images.size() < map.size())
                     exportImg(images.get(0), new File(imgDir, objFile.getName().replaceAll("(.+)\\..+", "$1.png")));
-                else
-                    for (Map.Entry<String, Holder> e : map.entrySet())
-                        exportImg(images.get(e.getValue().img), new File(imgDir, e.getKey() + ".png"));
+                else for (Map.Entry<String, Holder> e : map.entrySet())
+                    exportImg(images.get(e.getValue().img), new File(imgDir, e.getKey() + ".png"));
 
             } catch (IOException e) {
                 throw new RuntimeException(e);
@@ -674,10 +670,7 @@ public class QBImporter {
 
     public static QBModel loadQB(ResourceLocation res) {
         try {
-            return loadQB(Minecraft.getMinecraft()
-                    .getResourceManager()
-                    .getResource(res)
-                    .getInputStream());
+            return loadQB(Minecraft.getMinecraft().getResourceManager().getResource(res).getInputStream());
         } catch (Exception e) {
             throw new RuntimeException("failed to load model: " + res, e);
         }

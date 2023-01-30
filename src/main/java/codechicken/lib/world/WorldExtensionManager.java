@@ -1,12 +1,8 @@
 package codechicken.lib.world;
 
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import cpw.mods.fml.common.gameevent.TickEvent;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import java.util.ArrayList;
 import java.util.HashMap;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
@@ -18,8 +14,16 @@ import net.minecraftforge.event.world.ChunkWatchEvent.UnWatch;
 import net.minecraftforge.event.world.ChunkWatchEvent.Watch;
 import net.minecraftforge.event.world.WorldEvent;
 
+import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import cpw.mods.fml.common.gameevent.TickEvent;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+
 public class WorldExtensionManager {
+
     public static class WorldExtensionEventHandler {
+
         @SubscribeEvent
         public void onChunkDataLoad(ChunkDataEvent.Load event) {
             if (!worldMap.containsKey(event.world)) WorldExtensionManager.onWorldLoad(event.world);
@@ -70,7 +74,7 @@ public class WorldExtensionManager {
         @SubscribeEvent
         public void onWorldUnLoad(WorldEvent.Unload event) {
             if (worldMap.containsKey(event.world)) // because force closing unloads a world twice
-            for (WorldExtension extension : worldMap.remove(event.world)) extension.unload();
+                for (WorldExtension extension : worldMap.remove(event.world)) extension.unload();
         }
 
         @SubscribeEvent
@@ -92,9 +96,8 @@ public class WorldExtensionManager {
         @SideOnly(Side.CLIENT)
         public void clientTick(TickEvent.ClientTickEvent event) {
             World world = Minecraft.getMinecraft().theWorld;
-            if (worldMap.containsKey(world))
-                if (event.phase == TickEvent.Phase.START) preTick(world);
-                else postTick(world);
+            if (worldMap.containsKey(world)) if (event.phase == TickEvent.Phase.START) preTick(world);
+            else postTick(world);
         }
 
         @SubscribeEvent
@@ -107,8 +110,7 @@ public class WorldExtensionManager {
     }
 
     private static boolean initialised;
-    private static ArrayList<WorldExtensionInstantiator> extensionIntialisers =
-            new ArrayList<WorldExtensionInstantiator>();
+    private static ArrayList<WorldExtensionInstantiator> extensionIntialisers = new ArrayList<WorldExtensionInstantiator>();
 
     public static void registerWorldExtension(WorldExtensionInstantiator init) {
         if (!initialised) init();
@@ -137,9 +139,8 @@ public class WorldExtensionManager {
 
     private static void createChunkExtension(World world, Chunk chunk) {
         WorldExtension[] extensions = worldMap.get(world);
-        for (int i = 0; i < extensionIntialisers.size(); i++)
-            if (!extensions[i].containsChunk(chunk))
-                extensions[i].addChunk(extensionIntialisers.get(i).createChunkExtension(chunk, extensions[i]));
+        for (int i = 0; i < extensionIntialisers.size(); i++) if (!extensions[i].containsChunk(chunk))
+            extensions[i].addChunk(extensionIntialisers.get(i).createChunkExtension(chunk, extensions[i]));
     }
 
     private static void removeChunk(World world, Chunk chunk) {

@@ -1,13 +1,12 @@
 package codechicken.lib.render;
 
-import codechicken.lib.colour.Colour;
-import codechicken.lib.colour.ColourARGB;
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+
 import javax.imageio.ImageIO;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.client.renderer.texture.TextureManager;
@@ -16,11 +15,18 @@ import net.minecraft.util.IIcon;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.MinecraftForge;
+
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 
+import codechicken.lib.colour.Colour;
+import codechicken.lib.colour.ColourARGB;
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+
 public class TextureUtils {
+
     public static interface IIconSelfRegister {
+
         public void registerIcons(IIconRegister register);
 
         public int atlasIndex();
@@ -57,10 +63,7 @@ public class TextureUtils {
     }
 
     public static InputStream getTextureResource(ResourceLocation textureFile) throws IOException {
-        return Minecraft.getMinecraft()
-                .getResourceManager()
-                .getResource(textureFile)
-                .getInputStream();
+        return Minecraft.getMinecraft().getResourceManager().getResource(textureFile).getInputStream();
     }
 
     public static BufferedImage loadBufferedImage(ResourceLocation textureFile) {
@@ -83,24 +86,14 @@ public class TextureUtils {
         return Minecraft.getMinecraft().renderEngine;
     }
 
-    public static void copySubImg(
-            int[] fromTex,
-            int fromWidth,
-            int fromX,
-            int fromY,
-            int width,
-            int height,
-            int[] toTex,
-            int toWidth,
-            int toX,
-            int toY) {
-        for (int y = 0; y < height; y++)
-            for (int x = 0; x < width; x++) {
-                int fp = (y + fromY) * fromWidth + x + fromX;
-                int tp = (y + toX) * toWidth + x + toX;
+    public static void copySubImg(int[] fromTex, int fromWidth, int fromX, int fromY, int width, int height,
+            int[] toTex, int toWidth, int toX, int toY) {
+        for (int y = 0; y < height; y++) for (int x = 0; x < width; x++) {
+            int fp = (y + fromY) * fromWidth + x + fromX;
+            int tp = (y + toX) * toWidth + x + toX;
 
-                toTex[tp] = fromTex[fp];
-            }
+            toTex[tp] = fromTex[fp];
+        }
     }
 
     public static void bindAtlas(int atlasIndex) {
@@ -148,7 +141,8 @@ public class TextureUtils {
     }
 
     /**
-     * Uses an empty placeholder texture to tell if the map has been reloaded since the last call to refresh texture and the texture with name needs to be reacquired to be valid
+     * Uses an empty placeholder texture to tell if the map has been reloaded since the last call to refresh texture and
+     * the texture with name needs to be reacquired to be valid
      */
     public static boolean refreshTexture(TextureMap map, String name) {
         if (map.getTextureExtry(name) == null) {

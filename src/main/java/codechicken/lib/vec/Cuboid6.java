@@ -1,13 +1,16 @@
 package codechicken.lib.vec;
 
-import codechicken.lib.util.Copyable;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
+
 import net.minecraft.block.Block;
 import net.minecraft.util.AxisAlignedBB;
 
+import codechicken.lib.util.Copyable;
+
 public class Cuboid6 implements Copyable<Cuboid6> {
+
     public static Cuboid6 full = new Cuboid6(0, 0, 0, 1, 1, 1);
 
     public Vector3 min;
@@ -84,8 +87,7 @@ public class Cuboid6 implements Copyable<Cuboid6> {
     }
 
     public boolean intersects(Cuboid6 b) {
-        return max.x - 1E-5 > b.min.x
-                && b.max.x - 1E-5 > min.x
+        return max.x - 1E-5 > b.min.x && b.max.x - 1E-5 > min.x
                 && max.y - 1E-5 > b.min.y
                 && b.max.y - 1E-5 > min.y
                 && max.z - 1E-5 > b.min.z
@@ -108,9 +110,18 @@ public class Cuboid6 implements Copyable<Cuboid6> {
 
     public String toString() {
         MathContext cont = new MathContext(4, RoundingMode.HALF_UP);
-        return "Cuboid: (" + new BigDecimal(min.x, cont) + ", " + new BigDecimal(min.y, cont) + ", "
-                + new BigDecimal(min.z, cont) + ") -> (" + new BigDecimal(max.x, cont) + ", "
-                + new BigDecimal(max.y, cont) + ", " + new BigDecimal(max.z, cont) + ")";
+        return "Cuboid: (" + new BigDecimal(min.x, cont)
+                + ", "
+                + new BigDecimal(min.y, cont)
+                + ", "
+                + new BigDecimal(min.z, cont)
+                + ") -> ("
+                + new BigDecimal(max.x, cont)
+                + ", "
+                + new BigDecimal(max.y, cont)
+                + ", "
+                + new BigDecimal(max.z, cont)
+                + ")";
     }
 
     public Cuboid6 enclose(Vector3 vec) {

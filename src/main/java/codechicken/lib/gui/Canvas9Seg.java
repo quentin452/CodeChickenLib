@@ -1,12 +1,14 @@
 package codechicken.lib.gui;
 
-import codechicken.lib.render.CCRenderState;
-import codechicken.lib.render.TextureDataHolder;
-import codechicken.lib.render.TextureUtils;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.util.ResourceLocation;
 
+import codechicken.lib.render.CCRenderState;
+import codechicken.lib.render.TextureDataHolder;
+import codechicken.lib.render.TextureUtils;
+
 public class Canvas9Seg {
+
     public final ResourceLocation tex;
     public float[] seg_u = new float[4];
     public float[] seg_v = new float[4];
@@ -65,8 +67,8 @@ public class Canvas9Seg {
         CCRenderState.reset();
         CCRenderState.startDrawing();
 
-        int[] sw = new int[] {x, x + seg_w[0], x + w - seg_w[2], x + w};
-        int[] sh = new int[] {y, y + seg_h[0], y + h - seg_h[2], y + h};
+        int[] sw = new int[] { x, x + seg_w[0], x + w - seg_w[2], x + w };
+        int[] sh = new int[] { y, y + seg_h[0], y + h - seg_h[2], y + h };
 
         for (int seg = 0; seg < 9; seg++) drawSeg(sw, sh, seg);
 

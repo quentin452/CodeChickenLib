@@ -1,23 +1,29 @@
 package codechicken.lib.asm;
 
-import cpw.mods.fml.common.asm.transformers.deobf.FMLDeobfuscatingRemapper;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+
 import net.minecraft.launchwrapper.IClassTransformer;
 import net.minecraft.launchwrapper.Launch;
 import net.minecraft.launchwrapper.LaunchClassLoader;
+
 import org.objectweb.asm.tree.ClassNode;
 
+import cpw.mods.fml.common.asm.transformers.deobf.FMLDeobfuscatingRemapper;
+
 /**
- * This is added as a class transformer if CodeChickenCore is installed. Adding it as a class transformer will speed evaluation up slightly by automatically caching superclasses when they are first loaded.
+ * This is added as a class transformer if CodeChickenCore is installed. Adding it as a class transformer will speed
+ * evaluation up slightly by automatically caching superclasses when they are first loaded.
  */
 public class ClassHeirachyManager implements IClassTransformer {
+
     static {
         ASMInit.init();
     }
 
     public static class SuperCache {
+
         String superclass;
         public HashSet<String> parents = new HashSet<String>();
         private boolean flattened;
@@ -51,9 +57,7 @@ public class ClassHeirachyManager implements IClassTransformer {
 
     public static String unKey(String name) {
         if (ObfMapping.obfuscated)
-            name = FMLDeobfuscatingRemapper.INSTANCE
-                    .unmap(name.replace('.', '/'))
-                    .replace('/', '.');
+            name = FMLDeobfuscatingRemapper.INSTANCE.unmap(name.replace('.', '/')).replace('/', '.');
         return name;
     }
 
@@ -70,7 +74,7 @@ public class ClassHeirachyManager implements IClassTransformer {
 
         SuperCache cache = declareClass(name);
         if (cache == null) // just can't handle this
-        return false;
+            return false;
 
         cache.flatten();
         return cache.parents.contains(superclass);
@@ -85,15 +89,13 @@ public class ClassHeirachyManager implements IClassTransformer {
         try {
             byte[] bytes = cl.getClassBytes(unKey(name));
             if (bytes != null) cache = declareASM(bytes);
-        } catch (Exception e) {
-        }
+        } catch (Exception e) {}
 
         if (cache != null) return cache;
 
         try {
             cache = declareReflection(name);
-        } catch (ClassNotFoundException e) {
-        }
+        } catch (ClassNotFoundException e) {}
 
         return cache;
     }

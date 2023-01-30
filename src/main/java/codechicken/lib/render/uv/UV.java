@@ -1,11 +1,13 @@
 package codechicken.lib.render.uv;
 
-import codechicken.lib.util.Copyable;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
 
+import codechicken.lib.util.Copyable;
+
 public class UV implements Copyable<UV> {
+
     public double u;
     public double v;
     public int tex;

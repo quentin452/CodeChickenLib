@@ -1,13 +1,9 @@
 package codechicken.lib.inventory;
 
-import codechicken.lib.packet.PacketCustom;
-import codechicken.lib.packet.PacketCustom.IClientPacketHandler;
-import codechicken.lib.packet.PacketCustom.IServerPacketHandler;
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.relauncher.Side;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -18,19 +14,27 @@ import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.play.INetHandlerPlayClient;
 import net.minecraft.network.play.INetHandlerPlayServer;
+
 import org.apache.logging.log4j.LogManager;
 
+import codechicken.lib.packet.PacketCustom;
+import codechicken.lib.packet.PacketCustom.IClientPacketHandler;
+import codechicken.lib.packet.PacketCustom.IServerPacketHandler;
+import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.relauncher.Side;
+
 /**
- * Clean container implementation with a few extra features.
- * Easy shift-click handling.
- * Hooks for slot clicks, large stack sizes and some networking.
+ * Clean container implementation with a few extra features. Easy shift-click handling. Hooks for slot clicks, large
+ * stack sizes and some networking.
  */
 public abstract class ContainerExtended extends Container implements ICrafting {
+
     private static final String netChannel = "CCL:Container";
     private static int nextNetworkID = 0;
 
     static {
         PacketCustom.assignHandler(netChannel, new IClientPacketHandler() {
+
             @Override
             public void handlePacket(PacketCustom packet, Minecraft mc, INetHandlerPlayClient handler) {
                 Container cont = mc.thePlayer.openContainer;
@@ -42,6 +46,7 @@ public abstract class ContainerExtended extends Container implements ICrafting {
             }
         });
         PacketCustom.assignHandler(netChannel, new IServerPacketHandler() {
+
             @Override
             public void handlePacket(PacketCustom packet, EntityPlayerMP sender, INetHandlerPlayServer handler) {
                 Container cont = sender.openContainer;
@@ -87,8 +92,8 @@ public abstract class ContainerExtended extends Container implements ICrafting {
         sendContainerAndContentsToPlayer(container, list, playerCrafters);
     }
 
-    public void sendContainerAndContentsToPlayer(
-            Container container, List<ItemStack> list, List<EntityPlayerMP> playerCrafters) {
+    public void sendContainerAndContentsToPlayer(Container container, List<ItemStack> list,
+            List<EntityPlayerMP> playerCrafters) {
         LinkedList<ItemStack> largeStacks = new LinkedList<ItemStack>();
         for (int i = 0; i < list.size(); i++) {
             ItemStack stack = list.get(i);
@@ -159,8 +164,7 @@ public abstract class ContainerExtended extends Container implements ICrafting {
                 Slot slot = (Slot) inventorySlots.get(slotIndex);
                 ItemStack slotStack = slot.getStack();
 
-                if (slotStack != null
-                        && slotStack.getItem() == stack.getItem()
+                if (slotStack != null && slotStack.getItem() == stack.getItem()
                         && (!stack.getHasSubtypes() || stack.getItemDamage() == slotStack.getItemDamage())
                         && ItemStack.areItemStackTagsEqual(stack, slotStack)) {
                     int totalStackSize = slotStack.stackSize + stack.stackSize;
@@ -211,7 +215,8 @@ public abstract class ContainerExtended extends Container implements ICrafting {
     }
 
     /**
-     * Called when slotIndex is shift clicked on. Recommended implementation is to call mergeItemStack based on slotIndex
+     * Called when slotIndex is shift clicked on. Recommended implementation is to call mergeItemStack based on
+     * slotIndex
      *
      * @param stack The stack in the clicked slot
      * @return True if one or more items were moved from this slots into other slots
@@ -225,9 +230,8 @@ public abstract class ContainerExtended extends Container implements ICrafting {
     }
 
     protected void bindPlayerInventory(InventoryPlayer inventoryPlayer, int x, int y) {
-        for (int row = 0; row < 3; row++)
-            for (int col = 0; col < 9; col++)
-                addSlotToContainer(new Slot(inventoryPlayer, col + row * 9 + 9, x + col * 18, y + row * 18));
+        for (int row = 0; row < 3; row++) for (int col = 0; col < 9; col++)
+            addSlotToContainer(new Slot(inventoryPlayer, col + row * 9 + 9, x + col * 18, y + row * 18));
         for (int slot = 0; slot < 9; slot++) addSlotToContainer(new Slot(inventoryPlayer, slot, x + slot * 18, y + 58));
     }
 
@@ -241,15 +245,15 @@ public abstract class ContainerExtended extends Container implements ICrafting {
     }
 
     /**
-     * @param type An identifying number for the packet type between 2 and 0x79 inclusive. 1 is reserved for synchronising networkIDs
+     * @param type An identifying number for the packet type between 2 and 0x79 inclusive. 1 is reserved for
+     *             synchronising networkIDs
      * @return A packet on the CCL inventory channel that will be recieved by this container on the other network side
      */
     public PacketCustom getPacket(int type) {
         if (netID == 0)
             LogManager.getLogger("CodeChickenLib").error("Tried to get packet for container with 0 network ID");
-        if (type == 1)
-            throw new IllegalArgumentException(
-                    "Packet type 1 is reserved for network synchronisation in ContainerExtended");
+        if (type == 1) throw new IllegalArgumentException(
+                "Packet type 1 is reserved for network synchronisation in ContainerExtended");
 
         return new PacketCustom(netChannel, type).writeInt(netID);
     }

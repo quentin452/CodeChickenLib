@@ -1,6 +1,7 @@
 package codechicken.lib.world;
 
 import java.util.HashSet;
+
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.Packet;
@@ -8,6 +9,7 @@ import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraft.world.chunk.Chunk;
 
 public abstract class ChunkExtension {
+
     public final Chunk chunk;
     public final ChunkCoordIntPair coord;
     public final WorldExtension world;

@@ -5,9 +5,11 @@ import codechicken.lib.vec.Rotation;
 import codechicken.lib.vec.Vector3;
 
 public class LightModel implements CCRenderState.IVertexOperation {
+
     public static final int operationIndex = CCRenderState.registerOperation();
 
     public static class Light {
+
         public Vector3 ambient = new Vector3();
         public Vector3 diffuse = new Vector3();
         public Vector3 position;
@@ -30,8 +32,7 @@ public class LightModel implements CCRenderState.IVertexOperation {
     public static LightModel standardLightModel;
 
     static {
-        standardLightModel = new LightModel()
-                .setAmbient(new Vector3(0.4, 0.4, 0.4))
+        standardLightModel = new LightModel().setAmbient(new Vector3(0.4, 0.4, 0.4))
                 .addLight(new Light(new Vector3(0.2, 1, -0.7)).setDiffuse(new Vector3(0.6, 0.6, 0.6)))
                 .addLight(new Light(new Vector3(-0.2, 1, 0.7)).setDiffuse(new Vector3(0.6, 0.6, 0.6)));
     }
@@ -71,8 +72,7 @@ public class LightModel implements CCRenderState.IVertexOperation {
         if (n_colour.z > 1) n_colour.z = 1;
 
         n_colour.multiply((colour >>> 24) / 255D, (colour >> 16 & 0xFF) / 255D, (colour >> 8 & 0xFF) / 255D);
-        return (int) (n_colour.x * 255) << 24
-                | (int) (n_colour.y * 255) << 16
+        return (int) (n_colour.x * 255) << 24 | (int) (n_colour.y * 255) << 16
                 | (int) (n_colour.z * 255) << 8
                 | colour & 0xFF;
     }

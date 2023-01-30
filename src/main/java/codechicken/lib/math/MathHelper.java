@@ -1,6 +1,7 @@
 package codechicken.lib.math;
 
 public class MathHelper {
+
     public static final double phi = 1.618033988749894;
     public static final double pi = Math.PI;
     public static final double todeg = 57.29577951308232;
@@ -27,8 +28,8 @@ public class MathHelper {
     }
 
     /**
-     * @param a The value
-     * @param b The value to approach
+     * @param a   The value
+     * @param b   The value to approach
      * @param max The maximum step
      * @return the closed value to b no less than max from a
      */
@@ -37,8 +38,8 @@ public class MathHelper {
     }
 
     /**
-     * @param a The value
-     * @param b The value to approach
+     * @param a   The value
+     * @param b   The value to approach
      * @param max The maximum step
      * @return the closed value to b no less than max from a
      */
@@ -67,8 +68,8 @@ public class MathHelper {
     }
 
     /**
-     * @param a The value
-     * @param b The value to approach
+     * @param a     The value
+     * @param b     The value to approach
      * @param ratio The ratio to reduce the difference by
      * @return a+(b-a)*ratio
      */
@@ -77,10 +78,10 @@ public class MathHelper {
     }
 
     /**
-     * @param a The value
-     * @param b The value to approach
+     * @param a     The value
+     * @param b     The value to approach
      * @param ratio The ratio to reduce the difference by
-     * @param cap The maximum amount to advance by
+     * @param cap   The maximum amount to advance by
      * @return a+(b-a)*ratio
      */
     public static double approachExp(double a, double b, double ratio, double cap) {
@@ -90,11 +91,11 @@ public class MathHelper {
     }
 
     /**
-     * @param a The value
-     * @param b The value to approach
+     * @param a     The value
+     * @param b     The value to approach
      * @param ratio The ratio to reduce the difference by
-     * @param c The value to retreat from
-     * @param kick The difference when a == c
+     * @param c     The value to retreat from
+     * @param kick  The difference when a == c
      * @return
      */
     public static double retreatExp(double a, double b, double c, double ratio, double kick) {
@@ -106,8 +107,8 @@ public class MathHelper {
     /**
      *
      * @param value The value
-     * @param min The min value
-     * @param max The max value
+     * @param min   The min value
+     * @param max   The max value
      * @return The clipped value between min and max
      */
     public static double clip(double value, double min, double max) {

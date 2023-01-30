@@ -2,12 +2,15 @@ package codechicken.lib.asm;
 
 import static org.objectweb.asm.tree.AbstractInsnNode.*;
 
-import com.google.common.base.Function;
-import com.google.common.collect.Maps;
 import java.util.*;
+
 import org.objectweb.asm.tree.*;
 
+import com.google.common.base.Function;
+import com.google.common.collect.Maps;
+
 public class InsnComparator {
+
     public static boolean varInsnEqual(VarInsnNode insn1, VarInsnNode insn2) {
         return insn1.var == -1 || insn2.var == -1 || insn1.var == insn2.var;
     }
@@ -107,6 +110,7 @@ public class InsnComparator {
 
         Set<LabelNode> controlFlowLabels = getControlFlowLabels(list);
         Map<LabelNode, LabelNode> labelMap = Maps.asMap(controlFlowLabels, new Function<LabelNode, LabelNode>() {
+
             @Override
             public LabelNode apply(LabelNode input) {
                 return input;
@@ -138,8 +142,8 @@ public class InsnComparator {
         return find(new InsnListSection(haystack), needle);
     }
 
-    public static InsnListSection matches(
-            InsnListSection haystack, InsnListSection needle, Set<LabelNode> controlFlowLabels) {
+    public static InsnListSection matches(InsnListSection haystack, InsnListSection needle,
+            Set<LabelNode> controlFlowLabels) {
         int h = 0, n = 0;
         for (; h < haystack.size() && n < needle.size(); h++) {
             AbstractInsnNode insn = haystack.get(h);
@@ -155,9 +159,8 @@ public class InsnComparator {
 
     public static InsnListSection findOnce(InsnListSection haystack, InsnListSection needle) {
         List<InsnListSection> list = find(haystack, needle);
-        if (list.size() != 1)
-            throw new RuntimeException(
-                    "Needle found " + list.size() + " times in Haystack:\n" + haystack + "\n\n" + needle);
+        if (list.size() != 1) throw new RuntimeException(
+                "Needle found " + list.size() + " times in Haystack:\n" + haystack + "\n\n" + needle);
 
         return list.get(0);
     }

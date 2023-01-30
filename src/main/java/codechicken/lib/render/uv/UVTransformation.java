@@ -8,11 +8,14 @@ import codechicken.lib.vec.ITransformation;
  */
 public abstract class UVTransformation extends ITransformation<UV, UVTransformation>
         implements CCRenderState.IVertexOperation {
+
     public static final int operationIndex = CCRenderState.registerOperation();
 
     public UVTransformation at(UV point) {
         return new UVTransformationList(
-                new UVTranslation(-point.u, -point.v), this, new UVTranslation(point.u, point.v));
+                new UVTranslation(-point.u, -point.v),
+                this,
+                new UVTranslation(point.u, point.v));
     }
 
     public UVTransformationList with(UVTransformation t) {

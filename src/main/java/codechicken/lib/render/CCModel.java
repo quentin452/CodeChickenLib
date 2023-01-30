@@ -2,6 +2,14 @@ package codechicken.lib.render;
 
 import static codechicken.lib.vec.Rotation.sideRotations;
 
+import java.io.*;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import net.minecraft.client.Minecraft;
+import net.minecraft.util.ResourceLocation;
+
 import codechicken.lib.lighting.LC;
 import codechicken.lib.lighting.LightModel;
 import codechicken.lib.render.uv.UV;
@@ -9,15 +17,11 @@ import codechicken.lib.render.uv.UVTransformation;
 import codechicken.lib.render.uv.UVTranslation;
 import codechicken.lib.util.Copyable;
 import codechicken.lib.vec.*;
-import java.io.*;
-import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import net.minecraft.client.Minecraft;
-import net.minecraft.util.ResourceLocation;
 
 public class CCModel implements CCRenderState.IVertexSource, Copyable<CCModel> {
+
     private static class PositionNormalEntry {
+
         public Vector3 pos;
         public LinkedList<Vector3> normals = new LinkedList<Vector3>();
 
@@ -83,33 +87,23 @@ public class CCModel implements CCRenderState.IVertexSource, Copyable<CCModel> {
 
     /**
      * Each pixel corresponds to one unit of position when generating the model
-     * @param i Vertex index to start generating at
+     * 
+     * @param i  Vertex index to start generating at
      * @param x1 The minX bound of the box
      * @param y1 The minY bound of the box
      * @param z1 The minZ bound of the box
-     * @param w The width of the box
-     * @param h The height of the box
-     * @param d The depth of the box
+     * @param w  The width of the box
+     * @param h  The height of the box
+     * @param d  The depth of the box
      * @param tx The distance of the top left corner of the texture map from the left in pixels
      * @param ty The distance of the top left corner of the texture map from the top in pixels
      * @param tw The width of the texture in pixels
      * @param th The height of the texture in pixels
-     * @param f The scale of the model, pixels per block, normally 16
+     * @param f  The scale of the model, pixels per block, normally 16
      * @return The generated model
      */
-    public CCModel generateBox(
-            int i,
-            double x1,
-            double y1,
-            double z1,
-            double w,
-            double h,
-            double d,
-            double tx,
-            double ty,
-            double tw,
-            double th,
-            double f) {
+    public CCModel generateBox(int i, double x1, double y1, double z1, double w, double h, double d, double tx,
+            double ty, double tw, double th, double f) {
         double u1, v1, u2, v2;
         double x2 = x1 + w;
         double y2 = y1 + h;
@@ -186,7 +180,8 @@ public class CCModel implements CCRenderState.IVertexSource, Copyable<CCModel> {
 
     /**
      * Generates a box, uv mapped to be the same as a minecraft block with the same bounds
-     * @param i The vertex index to start generating at
+     * 
+     * @param i      The vertex index to start generating at
      * @param bounds The bounds of the block, 0 to 1
      * @return The generated model. When rendering an icon will need to be supplied for the UV transformation.
      */
@@ -196,7 +191,14 @@ public class CCModel implements CCRenderState.IVertexSource, Copyable<CCModel> {
 
     public CCModel generateBlock(int i, Cuboid6 bounds, int mask) {
         return generateBlock(
-                i, bounds.min.x, bounds.min.y, bounds.min.z, bounds.max.x, bounds.max.y, bounds.max.z, mask);
+                i,
+                bounds.min.x,
+                bounds.min.y,
+                bounds.min.z,
+                bounds.max.x,
+                bounds.max.y,
+                bounds.max.z,
+                mask);
     }
 
     public CCModel generateBlock(int i, double x1, double y1, double z1, double x2, double y2, double z2) {
@@ -205,13 +207,14 @@ public class CCModel implements CCRenderState.IVertexSource, Copyable<CCModel> {
 
     /**
      * Generates a box, uv mapped to be the same as a minecraft block with the same bounds
-     * @param i The vertex index to start generating at
-     * @param x1 minX
-     * @param y1 minY
-     * @param z1 minZ
-     * @param x2 maxX
-     * @param y2 maxY
-     * @param z2 maxZ
+     * 
+     * @param i    The vertex index to start generating at
+     * @param x1   minX
+     * @param y1   minY
+     * @param z1   minZ
+     * @param x2   maxX
+     * @param y2   maxY
+     * @param z2   maxZ
      * @param mask A bitmask of sides NOT to generate. I high bit at index s means side s will not be generated
      * @return The generated model. When rendering an icon will need to be supplied for the UV transformation.
      */
@@ -292,10 +295,11 @@ public class CCModel implements CCRenderState.IVertexSource, Copyable<CCModel> {
     }
 
     /**
-     * Computes the normals of all faces in the model.
-     * Uses the cross product of the vectors along 2 sides of the face
-     * @param start The first vertex to generate normals for
-     * @param length The number of vertices to generate normals for. Note this must be a multiple of 3 for triangles or 4 for quads
+     * Computes the normals of all faces in the model. Uses the cross product of the vectors along 2 sides of the face
+     * 
+     * @param start  The first vertex to generate normals for
+     * @param length The number of vertices to generate normals for. Note this must be a multiple of 3 for triangles or
+     *               4 for quads
      * @return The model
      */
     public CCModel computeNormals(int start, int length) {
@@ -315,8 +319,9 @@ public class CCModel implements CCRenderState.IVertexSource, Copyable<CCModel> {
     }
 
     /**
-     * Computes lighting using the normals add a light model
-     * If the model is rotated, the lighting will no longer be valid
+     * Computes lighting using the normals add a light model If the model is rotated, the lighting will no longer be
+     * valid
+     * 
      * @return The model
      */
     public CCModel computeLighting(LightModel light) {
@@ -338,6 +343,7 @@ public class CCModel implements CCRenderState.IVertexSource, Copyable<CCModel> {
 
     /**
      * Computes the minecraft lighting coordinates for use with a LightMatrix
+     * 
      * @return The model
      */
     public CCModel computeLightCoords() {
@@ -349,19 +355,18 @@ public class CCModel implements CCRenderState.IVertexSource, Copyable<CCModel> {
 
     /**
      * Averages all normals at the same position to produce a smooth lighting effect.
+     * 
      * @return The model
      */
     public CCModel smoothNormals() {
         ArrayList<PositionNormalEntry> map = new ArrayList<PositionNormalEntry>();
         Vector3[] normals = normals();
-        nextvert:
-        for (int k = 0; k < verts.length; k++) {
+        nextvert: for (int k = 0; k < verts.length; k++) {
             Vector3 vec = verts[k].vec;
-            for (PositionNormalEntry e : map)
-                if (e.positionEqual(vec)) {
-                    e.addNormal(normals[k]);
-                    continue nextvert;
-                }
+            for (PositionNormalEntry e : map) if (e.positionEqual(vec)) {
+                e.addNormal(normals[k]);
+                continue nextvert;
+            }
 
             map.add(new PositionNormalEntry(vec).addNormal(normals[k]));
         }
@@ -397,14 +402,12 @@ public class CCModel implements CCRenderState.IVertexSource, Copyable<CCModel> {
     public CCModel expand(int extraVerts) {
         int newLen = verts.length + extraVerts;
         verts = Arrays.copyOf(verts, newLen);
-        for (int i = 0; i < attributes.size(); i++)
-            if (attributes.get(i) != null)
-                attributes.set(
-                        i,
-                        CCRenderState.copyOf(
-                                (CCRenderState.VertexAttribute) CCRenderState.getAttribute(i),
-                                attributes.get(i),
-                                newLen));
+        for (int i = 0; i < attributes.size(); i++) if (attributes.get(i) != null) attributes.set(
+                i,
+                CCRenderState.copyOf(
+                        (CCRenderState.VertexAttribute) CCRenderState.getAttribute(i),
+                        attributes.get(i),
+                        newLen));
 
         return this;
     }
@@ -427,9 +430,10 @@ public class CCModel implements CCRenderState.IVertexSource, Copyable<CCModel> {
 
     /**
      * Renders vertices start through start+length-1 of the model
+     * 
      * @param start The first vertex index to render
-     * @param end The vertex index to render until
-     * @param ops Operations to apply
+     * @param end   The vertex index to render until
+     * @param ops   Operations to apply
      */
     public void render(int start, int end, CCRenderState.IVertexOperation... ops) {
         CCRenderState.setPipeline(this, start, end, ops);
@@ -481,8 +485,9 @@ public class CCModel implements CCRenderState.IVertexSource, Copyable<CCModel> {
 
     /**
      * Parses vertices, texture coords, normals and polygons from a WaveFront Obj file
-     * @param input An input stream to a obj file
-     * @param vertexMode The vertex mode to create the model for (GL_TRIANGLES or GL_QUADS)
+     * 
+     * @param input       An input stream to a obj file
+     * @param vertexMode  The vertex mode to create the model for (GL_TRIANGLES or GL_QUADS)
      * @param coordSystem The cooridnate system transformation to apply
      * @return A map of group names to models
      * @throws IOException
@@ -584,25 +589,25 @@ public class CCModel implements CCRenderState.IVertexSource, Copyable<CCModel> {
 
     /**
      * Parses vertices, texture coords, normals and polygons from a WaveFront Obj file
+     * 
      * @param res The resource for the obj file
      * @return A map of group names to models
      */
     public static Map<String, CCModel> parseObjModels(ResourceLocation res) {
         return parseObjModels(res, 4, null);
     }
+
     /**
      * Parses vertices, texture coords, normals and polygons from a WaveFront Obj file
-     * @param res The resource for the obj file
+     * 
+     * @param res         The resource for the obj file
      * @param coordSystem The cooridnate system transformation to apply
      * @return A map of group names to models
      */
     public static Map<String, CCModel> parseObjModels(ResourceLocation res, Transformation coordSystem) {
         try {
             return parseObjModels(
-                    Minecraft.getMinecraft()
-                            .getResourceManager()
-                            .getResource(res)
-                            .getInputStream(),
+                    Minecraft.getMinecraft().getResourceManager().getResource(res).getInputStream(),
                     4,
                     coordSystem);
         } catch (IOException e) {
@@ -612,19 +617,17 @@ public class CCModel implements CCRenderState.IVertexSource, Copyable<CCModel> {
 
     /**
      * Parses vertices, texture coords, normals and polygons from a WaveFront Obj file
-     * @param res The resource for the obj file
-     * @param vertexMode The vertex mode to create the model for (GL_TRIANGLES or GL_QUADS)
+     * 
+     * @param res         The resource for the obj file
+     * @param vertexMode  The vertex mode to create the model for (GL_TRIANGLES or GL_QUADS)
      * @param coordSystem The cooridnate system transformation to apply
      * @return A map of group names to models
      */
-    public static Map<String, CCModel> parseObjModels(
-            ResourceLocation res, int vertexMode, Transformation coordSystem) {
+    public static Map<String, CCModel> parseObjModels(ResourceLocation res, int vertexMode,
+            Transformation coordSystem) {
         try {
             return parseObjModels(
-                    Minecraft.getMinecraft()
-                            .getResourceManager()
-                            .getResource(res)
-                            .getInputStream(),
+                    Minecraft.getMinecraft().getResourceManager().getResource(res).getInputStream(),
                     vertexMode,
                     coordSystem);
         } catch (Exception e) {
@@ -632,8 +635,8 @@ public class CCModel implements CCRenderState.IVertexSource, Copyable<CCModel> {
         }
     }
 
-    public static CCModel createModel(
-            List<Vector3> verts, List<Vector3> uvs, List<Vector3> normals, int vertexMode, List<int[]> polys) {
+    public static CCModel createModel(List<Vector3> verts, List<Vector3> uvs, List<Vector3> normals, int vertexMode,
+            List<int[]> polys) {
         int vp = vertexMode == 7 ? 4 : 3;
         if (polys.size() < vp || polys.size() % vp != 0)
             throw new IllegalArgumentException("Invalid number of vertices for model: " + polys.size());
@@ -725,8 +728,7 @@ public class CCModel implements CCRenderState.IVertexSource, Copyable<CCModel> {
     }
 
     /**
-     * Brings the UV coordinates of each face closer to the center UV by d.
-     * Useful for fixing texture seams
+     * Brings the UV coordinates of each face closer to the center UV by d. Useful for fixing texture seams
      */
     public CCModel shrinkUVs(double d) {
         for (int k = 0; k < verts.length; k += vp) {
@@ -760,21 +762,20 @@ public class CCModel implements CCRenderState.IVertexSource, Copyable<CCModel> {
     public static void copy(CCModel src, int srcpos, CCModel dst, int destpos, int length) {
         for (int k = 0; k < length; k++) dst.verts[destpos + k] = src.verts[srcpos + k].copy();
 
-        for (int i = 0; i < src.attributes.size(); i++)
-            if (src.attributes.get(i) != null)
-                CCRenderState.arrayCopy(
-                        src.attributes.get(i),
-                        srcpos,
-                        dst.getOrAllocate(CCRenderState.getAttribute(i)),
-                        destpos,
-                        length);
+        for (int i = 0; i < src.attributes.size(); i++) if (src.attributes.get(i) != null) CCRenderState.arrayCopy(
+                src.attributes.get(i),
+                srcpos,
+                dst.getOrAllocate(CCRenderState.getAttribute(i)),
+                destpos,
+                length);
     }
 
     /**
      * Generate models rotated to the other 5 sides of the block
+     * 
      * @param models An array of 6 models
-     * @param side The side of this model
-     * @param point The rotation point
+     * @param side   The side of this model
+     * @param point  The rotation point
      */
     public static void generateSidedModels(CCModel[] models, int side, Vector3 point) {
         for (int s = 0; s < 6; s++) {
@@ -786,9 +787,10 @@ public class CCModel implements CCRenderState.IVertexSource, Copyable<CCModel> {
 
     /**
      * Generate models rotated to the other 3 horizontal of the block
+     * 
      * @param models An array of 4 models
-     * @param side The side of this model
-     * @param point The rotation point
+     * @param side   The side of this model
+     * @param point  The rotation point
      */
     public static void generateSidedModelsH(CCModel[] models, int side, Vector3 point) {
         for (int s = 2; s < 6; s++) {
@@ -804,6 +806,7 @@ public class CCModel implements CCRenderState.IVertexSource, Copyable<CCModel> {
 
     /**
      * Generates copies of faces with clockwise vertices
+     * 
      * @return The model
      */
     public static CCModel generateBackface(CCModel src, int srcpos, CCModel dst, int destpos, int length) {
@@ -811,17 +814,15 @@ public class CCModel implements CCRenderState.IVertexSource, Copyable<CCModel> {
         if (srcpos % vp != 0 || destpos % vp != 0 || length % vp != 0)
             throw new IllegalArgumentException("Vertices do not align with polygons");
 
-        int[][] o = new int[][] {{0, 0}, {1, vp - 1}, {2, vp - 2}, {3, vp - 3}};
+        int[][] o = new int[][] { { 0, 0 }, { 1, vp - 1 }, { 2, vp - 2 }, { 3, vp - 3 } };
         for (int i = 0; i < length; i++) {
             int b = (i / vp) * vp;
             int d = i % vp;
             int di = destpos + b + o[d][1];
             int si = srcpos + b + o[d][0];
             dst.verts[di] = src.verts[si].copy();
-            for (int a = 0; a < src.attributes.size(); a++)
-                if (src.attributes.get(a) != null)
-                    CCRenderState.arrayCopy(
-                            src.attributes.get(a), si, dst.getOrAllocate(CCRenderState.getAttribute(a)), di, 1);
+            for (int a = 0; a < src.attributes.size(); a++) if (src.attributes.get(a) != null) CCRenderState
+                    .arrayCopy(src.attributes.get(a), si, dst.getOrAllocate(CCRenderState.getAttribute(a)), di, 1);
 
             if (dst.normals() != null && dst.normals()[di] != null) dst.normals()[di].negate();
         }
@@ -829,8 +830,8 @@ public class CCModel implements CCRenderState.IVertexSource, Copyable<CCModel> {
     }
 
     /**
-     * Generates sided copies of vertices into this model.
-     * Assumes that your model has been generated at vertex side*(numVerts/6)
+     * Generates sided copies of vertices into this model. Assumes that your model has been generated at vertex
+     * side*(numVerts/6)
      */
     public CCModel generateSidedParts(int side, Vector3 point) {
         if (verts.length % (6 * vp) != 0)
@@ -847,8 +848,8 @@ public class CCModel implements CCRenderState.IVertexSource, Copyable<CCModel> {
     }
 
     /**
-     * Generates sided copies of vertices into this model.
-     * Assumes that your model has been generated at vertex side*(numVerts/4)
+     * Generates sided copies of vertices into this model. Assumes that your model has been generated at vertex
+     * side*(numVerts/4)
      */
     public CCModel generateSidedPartsH(int side, Vector3 point) {
         if (verts.length % (4 * vp) != 0)
@@ -885,11 +886,10 @@ public class CCModel implements CCRenderState.IVertexSource, Copyable<CCModel> {
         }
 
         Vector3[] normals = normals();
-        if (normals != null)
-            for (int k = 0; k < length; k++) {
-                normals[destpos + k] = normals[srcpos + k].copy();
-                t.applyN(normals[destpos + k]);
-            }
+        if (normals != null) for (int k = 0; k < length; k++) {
+            normals[destpos + k] = normals[srcpos + k].copy();
+            t.applyN(normals[destpos + k]);
+        }
 
         return this;
     }

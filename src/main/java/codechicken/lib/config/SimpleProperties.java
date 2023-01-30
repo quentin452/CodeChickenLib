@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Map.Entry;
 
 public class SimpleProperties {
+
     public HashMap<String, String> propertyMap = new HashMap<String, String>();
     public File propertyFile;
     public boolean saveOnChange = false;
@@ -32,8 +33,8 @@ public class SimpleProperties {
         loading = true;
 
         try {
-            BufferedReader reader =
-                    new BufferedReader(new InputStreamReader(new FileInputStream(propertyFile), encoding));
+            BufferedReader reader = new BufferedReader(
+                    new InputStreamReader(new FileInputStream(propertyFile), encoding));
             while (true) {
                 String read = reader.readLine();
                 if (read == null) break;

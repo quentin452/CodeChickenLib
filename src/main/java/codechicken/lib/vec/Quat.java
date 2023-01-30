@@ -1,12 +1,14 @@
 package codechicken.lib.vec;
 
-import codechicken.lib.math.MathHelper;
-import codechicken.lib.util.Copyable;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
 
+import codechicken.lib.math.MathHelper;
+import codechicken.lib.util.Copyable;
+
 public class Quat implements Copyable<Quat> {
+
     public double x;
     public double y;
     public double z;
@@ -128,8 +130,14 @@ public class Quat implements Copyable<Quat> {
 
     public String toString() {
         MathContext cont = new MathContext(4, RoundingMode.HALF_UP);
-        return "Quat(" + new BigDecimal(s, cont) + ", " + new BigDecimal(x, cont) + ", " + new BigDecimal(y, cont)
-                + ", " + new BigDecimal(z, cont) + ")";
+        return "Quat(" + new BigDecimal(s, cont)
+                + ", "
+                + new BigDecimal(x, cont)
+                + ", "
+                + new BigDecimal(y, cont)
+                + ", "
+                + new BigDecimal(z, cont)
+                + ")";
     }
 
     public Rotation rotation() {

@@ -1,11 +1,8 @@
 package codechicken.lib.render;
 
-import codechicken.lib.render.SpriteSheetManager.SpriteSheet;
-import codechicken.lib.render.TextureUtils.IIconSelfRegister;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -16,8 +13,14 @@ import net.minecraft.client.resources.data.AnimationMetadataSection;
 import net.minecraft.client.settings.GameSettings;
 import net.minecraft.util.ResourceLocation;
 
+import codechicken.lib.render.SpriteSheetManager.SpriteSheet;
+import codechicken.lib.render.TextureUtils.IIconSelfRegister;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+
 @SideOnly(Side.CLIENT)
 public class TextureSpecial extends TextureAtlasSprite implements IIconSelfRegister {
+
     // sprite sheet fields
     private int spriteIndex;
     private SpriteSheet spriteSheet;
@@ -99,8 +102,8 @@ public class TextureSpecial extends TextureAtlasSprite implements IIconSelfRegis
     }
 
     @Override
-    public void loadSprite(
-            BufferedImage[] images, AnimationMetadataSection animationMeta, boolean anisotropicFiltering) {
+    public void loadSprite(BufferedImage[] images, AnimationMetadataSection animationMeta,
+            boolean anisotropicFiltering) {
         rawWidth = images[0].getWidth();
         rawHeight = images[0].getHeight();
         super.loadSprite(images, animationMeta, anisotropicFiltering);

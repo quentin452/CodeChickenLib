@@ -1,20 +1,24 @@
 package codechicken.lib.vec;
 
-import codechicken.lib.math.MathHelper;
-import codechicken.lib.util.Copyable;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
+
 import net.minecraft.entity.Entity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Vec3;
+
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Vector3f;
 import org.lwjgl.util.vector.Vector4f;
 
+import codechicken.lib.math.MathHelper;
+import codechicken.lib.util.Copyable;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+
 public class Vector3 implements Copyable<Vector3> {
+
     public static Vector3 zero = new Vector3();
     public static Vector3 one = new Vector3(1, 1, 1);
     public static Vector3 center = new Vector3(0.5, 0.5, 0.5);
@@ -223,7 +227,11 @@ public class Vector3 implements Copyable<Vector3> {
 
     public String toString() {
         MathContext cont = new MathContext(4, RoundingMode.HALF_UP);
-        return "Vector3(" + new BigDecimal(x, cont) + ", " + new BigDecimal(y, cont) + ", " + new BigDecimal(z, cont)
+        return "Vector3(" + new BigDecimal(x, cont)
+                + ", "
+                + new BigDecimal(y, cont)
+                + ", "
+                + new BigDecimal(z, cont)
                 + ")";
     }
 
@@ -390,11 +398,11 @@ public class Vector3 implements Copyable<Vector3> {
 
     /**
      * Equals method with tolerance
+     * 
      * @return true if this is equal to v within +-1E-5
      */
     public boolean equalsT(Vector3 v) {
-        return MathHelper.between(x - 1E-5, v.x, x + 1E-5)
-                && MathHelper.between(y - 1E-5, v.y, y + 1E-5)
+        return MathHelper.between(x - 1E-5, v.x, x + 1E-5) && MathHelper.between(y - 1E-5, v.y, y + 1E-5)
                 && MathHelper.between(z - 1E-5, v.z, z + 1E-5);
     }
 

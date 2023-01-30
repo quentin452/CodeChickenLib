@@ -1,11 +1,13 @@
 package codechicken.lib.data;
 
-import codechicken.lib.vec.BlockCoord;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fluids.FluidStack;
 
+import codechicken.lib.vec.BlockCoord;
+
 public interface MCDataOutput {
+
     public MCDataOutput writeLong(long l);
 
     public MCDataOutput writeInt(int i);

@@ -3,6 +3,7 @@ package codechicken.lib.inventory;
 import codechicken.lib.packet.PacketCustom;
 
 public abstract class IntegerSync implements IContainerSyncVar {
+
     public int c_value;
 
     @Override

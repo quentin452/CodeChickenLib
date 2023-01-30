@@ -9,6 +9,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.tree.*;
 import org.objectweb.asm.util.Textifier;
@@ -18,7 +19,9 @@ import org.objectweb.asm.util.TraceMethodVisitor;
  * A section of an InsnList, may become invalid if the insn list is modified
  */
 public class InsnListSection implements Iterable<AbstractInsnNode> {
+
     private class InsnListSectionIterator implements Iterator<AbstractInsnNode> {
+
         int i = 0;
 
         @Override
@@ -143,6 +146,7 @@ public class InsnListSection implements Iterable<AbstractInsnNode> {
 
     /**
      * Removes leading and trailing labels and line number nodes that don't affect control flow
+     * 
      * @return this
      */
     public InsnListSection trim(Set<LabelNode> controlFlowLabels) {
@@ -167,34 +171,31 @@ public class InsnListSection implements Iterable<AbstractInsnNode> {
 
     public HashMap<LabelNode, LabelNode> identityLabelMap() {
         HashMap<LabelNode, LabelNode> labelMap = new HashMap<LabelNode, LabelNode>();
-        for (AbstractInsnNode insn : this)
-            switch (insn.getType()) {
-                case LABEL:
-                    labelMap.put((LabelNode) insn, (LabelNode) insn);
-                    break;
-                case JUMP_INSN:
-                    labelMap.put(((JumpInsnNode) insn).label, ((JumpInsnNode) insn).label);
-                    break;
-                case LOOKUPSWITCH_INSN:
-                    LookupSwitchInsnNode linsn = (LookupSwitchInsnNode) insn;
-                    labelMap.put(linsn.dflt, linsn.dflt);
-                    for (LabelNode label : linsn.labels) labelMap.put(label, label);
-                    break;
-                case TABLESWITCH_INSN:
-                    TableSwitchInsnNode tinsn = (TableSwitchInsnNode) insn;
-                    labelMap.put(tinsn.dflt, tinsn.dflt);
-                    for (LabelNode label : tinsn.labels) labelMap.put(label, label);
-                    break;
-                case FRAME:
-                    FrameNode fnode = (FrameNode) insn;
-                    if (fnode.local != null)
-                        for (Object o : fnode.local)
-                            if (o instanceof LabelNode) labelMap.put((LabelNode) o, (LabelNode) o);
-                    if (fnode.stack != null)
-                        for (Object o : fnode.stack)
-                            if (o instanceof LabelNode) labelMap.put((LabelNode) o, (LabelNode) o);
-                    break;
-            }
+        for (AbstractInsnNode insn : this) switch (insn.getType()) {
+            case LABEL:
+                labelMap.put((LabelNode) insn, (LabelNode) insn);
+                break;
+            case JUMP_INSN:
+                labelMap.put(((JumpInsnNode) insn).label, ((JumpInsnNode) insn).label);
+                break;
+            case LOOKUPSWITCH_INSN:
+                LookupSwitchInsnNode linsn = (LookupSwitchInsnNode) insn;
+                labelMap.put(linsn.dflt, linsn.dflt);
+                for (LabelNode label : linsn.labels) labelMap.put(label, label);
+                break;
+            case TABLESWITCH_INSN:
+                TableSwitchInsnNode tinsn = (TableSwitchInsnNode) insn;
+                labelMap.put(tinsn.dflt, tinsn.dflt);
+                for (LabelNode label : tinsn.labels) labelMap.put(label, label);
+                break;
+            case FRAME:
+                FrameNode fnode = (FrameNode) insn;
+                if (fnode.local != null)
+                    for (Object o : fnode.local) if (o instanceof LabelNode) labelMap.put((LabelNode) o, (LabelNode) o);
+                if (fnode.stack != null)
+                    for (Object o : fnode.stack) if (o instanceof LabelNode) labelMap.put((LabelNode) o, (LabelNode) o);
+                break;
+        }
 
         return labelMap;
     }

@@ -4,6 +4,7 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 public abstract class VariableTransformation extends Transformation {
+
     public Matrix4 mat;
 
     public VariableTransformation(Matrix4 mat) {

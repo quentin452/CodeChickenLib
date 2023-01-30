@@ -4,13 +4,16 @@ import static codechicken.lib.asm.ASMHelper.*;
 
 import java.io.File;
 import java.util.*;
+
 import org.objectweb.asm.*;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.InsnList;
 import org.objectweb.asm.tree.MethodNode;
 
 public class ModularASMTransformer {
+
     public static class ClassNodeTransformerList {
+
         List<ClassNodeTransformer> transformers = new LinkedList<ClassNodeTransformer>();
         HashSet<ObfMapping> methodsToSort = new HashSet<ObfMapping>();
 
@@ -45,6 +48,7 @@ public class ModularASMTransformer {
     }
 
     public abstract static class ClassNodeTransformer {
+
         public int writeFlags;
 
         public ClassNodeTransformer(int writeFlags) {
@@ -63,6 +67,7 @@ public class ModularASMTransformer {
     }
 
     public abstract static class MethodTransformer extends ClassNodeTransformer {
+
         public final ObfMapping method;
 
         public MethodTransformer(ObfMapping method) {
@@ -90,6 +95,7 @@ public class ModularASMTransformer {
     }
 
     public static class MethodWriter extends ClassNodeTransformer {
+
         public final int access;
         public final ObfMapping method;
         public final String[] exceptions;
@@ -148,6 +154,7 @@ public class ModularASMTransformer {
     }
 
     public static class MethodInjector extends MethodTransformer {
+
         public ASMBlock needle;
         public ASMBlock injection;
         public boolean before;
@@ -184,8 +191,14 @@ public class ModularASMTransformer {
                 else mv.instructions.add(injection.rawListCopy());
             } else {
                 for (InsnListSection key : InsnComparator.findN(mv.instructions, needle.list)) {
-                    logger.debug("Injecting " + (before ? "before" : "after") + " method " + method + " @ " + key.start
-                            + " - " + key.end);
+                    logger.debug(
+                            "Injecting " + (before ? "before" : "after")
+                                    + " method "
+                                    + method
+                                    + " @ "
+                                    + key.start
+                                    + " - "
+                                    + key.end);
                     ASMBlock injectBlock = injection.copy().mergeLabels(needle.applyLabels(key));
 
                     if (before) key.insertBefore(injectBlock.list.list);
@@ -196,6 +209,7 @@ public class ModularASMTransformer {
     }
 
     public static class MethodReplacer extends MethodTransformer {
+
         public ASMBlock needle;
         public ASMBlock replacement;
 
@@ -225,6 +239,7 @@ public class ModularASMTransformer {
     }
 
     public static class FieldWriter extends ClassNodeTransformer {
+
         public final ObfMapping field;
         public final int access;
         public final Object value;

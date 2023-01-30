@@ -2,6 +2,7 @@ package codechicken.lib.vec;
 
 @SuppressWarnings("serial")
 public class IrreversibleTransformationException extends RuntimeException {
+
     public ITransformation t;
 
     public IrreversibleTransformationException(ITransformation t) {

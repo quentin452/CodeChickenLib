@@ -9,6 +9,7 @@ import net.minecraft.nbt.NBTTagCompound;
  * IInventory implementation which saves and loads from an NBT tag
  */
 public class InventoryNBT implements IInventory {
+
     protected ItemStack[] items;
     protected NBTTagCompound tag;
 

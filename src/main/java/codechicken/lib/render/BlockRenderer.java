@@ -5,9 +5,11 @@ import codechicken.lib.render.CCRenderState.VertexAttribute;
 import codechicken.lib.vec.Cuboid6;
 
 public class BlockRenderer {
+
     public static class BlockFace implements CCRenderState.IVertexSource {
-        public Vertex5[] verts = new Vertex5[] {new Vertex5(), new Vertex5(), new Vertex5(), new Vertex5()};
-        public LC[] lightCoords = new LC[] {new LC(), new LC(), new LC(), new LC()};
+
+        public Vertex5[] verts = new Vertex5[] { new Vertex5(), new Vertex5(), new Vertex5(), new Vertex5() };
+        public LC[] lightCoords = new LC[] { new LC(), new LC(), new LC(), new LC() };
         public boolean lcComputed = false;
         public int side;
 
@@ -119,6 +121,7 @@ public class BlockRenderer {
     }
 
     public static class FullBlock implements CCRenderState.IVertexSource {
+
         public Vertex5[] verts = CCModel.quadModel(24).generateBlock(0, Cuboid6.full).verts;
         public LC[] lightCoords = new LC[24];
 
@@ -156,31 +159,32 @@ public class BlockRenderer {
 
     /**
      * Renders faces of a block-like model based on a sideMask. Eg for side 2, verts 8-11 will be rendered
+     * 
      * @param sideMask A mask of faces not to render
      */
     public static void renderFaces(int sideMask) {
         if (sideMask == 0x3F) return;
-        for (int s = 0; s < 6; s++)
-            if ((sideMask & 1 << s) == 0) {
-                CCRenderState.setVertexRange(s * 4, (s + 1) * 4);
-                CCRenderState.render();
-            }
+        for (int s = 0; s < 6; s++) if ((sideMask & 1 << s) == 0) {
+            CCRenderState.setVertexRange(s * 4, (s + 1) * 4);
+            CCRenderState.render();
+        }
     }
 
     private static BlockFace face = new BlockFace();
+
     /**
      * Renders faces of a cuboid with texture coordinates mapped to match a standard minecraft block
-     * @param bounds The bounding cuboid to render
+     * 
+     * @param bounds   The bounding cuboid to render
      * @param sideMask A mask of faces not to render
      */
     public static void renderCuboid(Cuboid6 bounds, int sideMask) {
         if (sideMask == 0x3F) return;
 
         CCRenderState.setModel(face);
-        for (int s = 0; s < 6; s++)
-            if ((sideMask & 1 << s) == 0) {
-                face.loadCuboidFace(bounds, s);
-                CCRenderState.render();
-            }
+        for (int s = 0; s < 6; s++) if ((sideMask & 1 << s) == 0) {
+            face.loadCuboidFace(bounds, s);
+            CCRenderState.render();
+        }
     }
 }

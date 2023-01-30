@@ -1,12 +1,14 @@
 package codechicken.lib.asm;
 
 import java.util.Set;
+
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.commons.LocalVariablesSorter;
 
 public class LocalVariablesSorterVisitor extends ClassVisitor {
+
     public Set<ObfMapping> methods;
     public String owner;
 

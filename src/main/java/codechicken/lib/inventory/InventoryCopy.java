@@ -8,6 +8,7 @@ import net.minecraft.item.ItemStack;
  * Creates a copy of an IInventory for extended simulation
  */
 public class InventoryCopy implements IInventory {
+
     public boolean[] accessible;
     public ItemStack[] items;
     public IInventory inv;

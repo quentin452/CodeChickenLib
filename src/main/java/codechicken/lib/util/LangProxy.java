@@ -3,6 +3,7 @@ package codechicken.lib.util;
 import net.minecraft.util.StatCollector;
 
 public class LangProxy {
+
     public final String namespace;
 
     public LangProxy(String namespace) {

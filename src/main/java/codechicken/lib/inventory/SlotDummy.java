@@ -5,6 +5,7 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 
 public class SlotDummy extends SlotHandleClicks {
+
     public final int stackLimit;
 
     public SlotDummy(IInventory inv, int slot, int x, int y) {

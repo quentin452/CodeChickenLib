@@ -3,7 +3,8 @@ package codechicken.lib.config;
 import java.io.*;
 
 public class ConfigFile extends ConfigTagParent {
-    public static final byte[] crlf = new byte[] {0xD, 0xA};
+
+    public static final byte[] crlf = new byte[] { 0xD, 0xA };
 
     public File file;
     private boolean loading;

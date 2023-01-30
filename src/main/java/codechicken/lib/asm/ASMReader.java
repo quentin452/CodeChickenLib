@@ -8,9 +8,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.*;
+
 import org.objectweb.asm.tree.*;
 
 public class ASMReader {
+
     public static Map<String, Integer> opCodes = new HashMap<String, Integer>();
     public static byte[] TYPE;
 
@@ -235,9 +237,7 @@ public class ASMReader {
                             case METHOD_INSN:
                                 StringBuilder sb = new StringBuilder();
                                 for (int i = 1; i < split.length; i++) sb.append(split[i]);
-                                insn = ObfMapping.fromDesc(sb.toString())
-                                        .toClassloading()
-                                        .toInsn(opcode);
+                                insn = ObfMapping.fromDesc(sb.toString()).toClassloading().toInsn(opcode);
                                 break;
                             case INVOKE_DYNAMIC_INSN:
                                 throw new Exception("Found INVOKEDYNAMIC while reading");

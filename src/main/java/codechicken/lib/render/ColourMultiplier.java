@@ -3,6 +3,7 @@ package codechicken.lib.render;
 import codechicken.lib.colour.ColourRGBA;
 
 public class ColourMultiplier implements CCRenderState.IVertexOperation {
+
     private static ColourMultiplier instance = new ColourMultiplier(-1);
 
     public static ColourMultiplier instance(int colour) {

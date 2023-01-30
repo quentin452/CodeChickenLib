@@ -12,13 +12,11 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class LibDownloader {
-    private static String[] libs = new String[] {
-        "org/ow2/asm/asm-debug-all/5.0.3/asm-debug-all-5.0.3.jar",
-        "com/google/guava/guava/14.0/guava-14.0.jar",
-        "net/sf/jopt-simple/jopt-simple/4.5/jopt-simple-4.5.jar",
-        "org/apache/logging/log4j/log4j-core/2.0-beta9/log4j-core-2.0-beta9.jar",
-        "org/apache/logging/log4j/log4j-api/2.0-beta9/log4j-api-2.0-beta9.jar"
-    };
+
+    private static String[] libs = new String[] { "org/ow2/asm/asm-debug-all/5.0.3/asm-debug-all-5.0.3.jar",
+            "com/google/guava/guava/14.0/guava-14.0.jar", "net/sf/jopt-simple/jopt-simple/4.5/jopt-simple-4.5.jar",
+            "org/apache/logging/log4j/log4j-core/2.0-beta9/log4j-core-2.0-beta9.jar",
+            "org/apache/logging/log4j/log4j-api/2.0-beta9/log4j-api-2.0-beta9.jar" };
     private static File libDir = new File("lib");
 
     private static ByteBuffer downloadBuffer = ByteBuffer.allocateDirect(1 << 23);
@@ -35,10 +33,9 @@ public class LibDownloader {
     private static void addPaths(String[] libs) {
         try {
             URLClassLoader cl = (URLClassLoader) ClassLoader.getSystemClassLoader();
-            Method m_addURL = URLClassLoader.class.getDeclaredMethod("addURL", new Class[] {URL.class});
+            Method m_addURL = URLClassLoader.class.getDeclaredMethod("addURL", new Class[] { URL.class });
             m_addURL.setAccessible(true);
-            for (String lib : libs)
-                m_addURL.invoke(cl, new File(libDir, fileName(lib)).toURI().toURL());
+            for (String lib : libs) m_addURL.invoke(cl, new File(libDir, fileName(lib)).toURI().toURL());
         } catch (Exception e) {
             throw new RuntimeException("Failed to add libraries to classpath", e);
         }

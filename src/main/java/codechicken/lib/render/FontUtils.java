@@ -3,9 +3,11 @@ package codechicken.lib.render;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.item.ItemStack;
+
 import org.lwjgl.opengl.GL11;
 
 public class FontUtils {
+
     public static FontRenderer fontRenderer = Minecraft.getMinecraft().fontRenderer;
 
     public static void drawCenteredString(String s, int xCenter, int y, int colour) {
@@ -16,7 +18,7 @@ public class FontUtils {
         fontRenderer.drawString(s, xRight - fontRenderer.getStringWidth(s), y, colour);
     }
 
-    public static final String[] prefixes = new String[] {"K", "M", "G"};
+    public static final String[] prefixes = new String[] { "K", "M", "G" };
 
     public static void drawItemQuantity(int x, int y, ItemStack item, String quantity, int mode) {
         if (item == null || (quantity == null && item.stackSize <= 1)) return;

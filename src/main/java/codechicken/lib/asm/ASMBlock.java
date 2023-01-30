@@ -2,17 +2,20 @@ package codechicken.lib.asm;
 
 import static org.objectweb.asm.tree.AbstractInsnNode.*;
 
-import com.google.common.collect.BiMap;
-import com.google.common.collect.HashBiMap;
-import com.google.common.collect.ImmutableMap;
 import java.util.*;
 import java.util.Map.Entry;
+
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.InsnList;
 import org.objectweb.asm.tree.JumpInsnNode;
 import org.objectweb.asm.tree.LabelNode;
 
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
+import com.google.common.collect.ImmutableMap;
+
 public class ASMBlock {
+
     public InsnListSection list;
     private BiMap<String, LabelNode> labels;
 
@@ -44,22 +47,21 @@ public class ASMBlock {
     }
 
     public void replaceLabels(Map<LabelNode, LabelNode> labelMap, Set<LabelNode> usedLabels) {
-        for (AbstractInsnNode insn : list)
-            switch (insn.getType()) {
-                case LABEL:
-                    AbstractInsnNode insn2 = insn.clone(labelMap);
-                    if (insn2 == insn) // identity mapping
+        for (AbstractInsnNode insn : list) switch (insn.getType()) {
+            case LABEL:
+                AbstractInsnNode insn2 = insn.clone(labelMap);
+                if (insn2 == insn) // identity mapping
                     continue;
-                    if (usedLabels.contains(insn2))
-                        throw new IllegalStateException("LabelNode cannot be a part of two InsnLists");
-                    list.replace(insn, insn2);
-                    break;
-                case JUMP_INSN:
-                case FRAME:
-                case LOOKUPSWITCH_INSN:
-                case TABLESWITCH_INSN:
-                    list.replace(insn, insn.clone(labelMap));
-            }
+                if (usedLabels.contains(insn2))
+                    throw new IllegalStateException("LabelNode cannot be a part of two InsnLists");
+                list.replace(insn, insn2);
+                break;
+            case JUMP_INSN:
+            case FRAME:
+            case LOOKUPSWITCH_INSN:
+            case TABLESWITCH_INSN:
+                list.replace(insn, insn.clone(labelMap));
+        }
 
         for (Entry<LabelNode, LabelNode> entry : labelMap.entrySet()) {
             String key = labels.inverse().get(entry.getKey());
@@ -78,6 +80,7 @@ public class ASMBlock {
 
     /**
      * Pulls all common labels from other into this
+     * 
      * @return this
      */
     public ASMBlock mergeLabels(ASMBlock other) {
@@ -99,6 +102,7 @@ public class ASMBlock {
 
     /**
      * Like mergeLabels but pulls insns from other list into this so LabelNodes can be transferred
+     * 
      * @return this
      */
     public ASMBlock pullLabels(ASMBlock other) {
@@ -125,7 +129,7 @@ public class ASMBlock {
 
         HashMap<LabelNode, LabelNode> labelMap = new HashMap<LabelNode, LabelNode>();
 
-        for (int i = 0, k = 0; i < list.size() && k < list2.size(); ) {
+        for (int i = 0, k = 0; i < list.size() && k < list2.size();) {
             AbstractInsnNode insn1 = list.get(i);
             if (!InsnComparator.insnImportant(insn1, cFlowLabels1)) {
                 i++;

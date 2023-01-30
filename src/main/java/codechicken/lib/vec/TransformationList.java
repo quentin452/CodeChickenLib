@@ -1,11 +1,13 @@
 package codechicken.lib.vec;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+
 public class TransformationList extends Transformation {
+
     private ArrayList<Transformation> transformations = new ArrayList<Transformation>();
     private Matrix4 mat;
 
@@ -20,14 +22,14 @@ public class TransformationList extends Transformation {
     public Matrix4 compile() {
         if (mat == null) {
             mat = new Matrix4();
-            for (int i = transformations.size() - 1; i >= 0; i--)
-                transformations.get(i).apply(mat);
+            for (int i = transformations.size() - 1; i >= 0; i--) transformations.get(i).apply(mat);
         }
         return mat;
     }
 
     /**
      * Returns a global space matrix as opposed to an object space matrix (reverse application order)
+     * 
      * @return
      */
     public Matrix4 reverseCompile() {
@@ -39,17 +41,13 @@ public class TransformationList extends Transformation {
     @Override
     public void apply(Vector3 vec) {
         if (mat != null) mat.apply(vec);
-        else
-            for (int i = 0; i < transformations.size(); i++)
-                transformations.get(i).apply(vec);
+        else for (int i = 0; i < transformations.size(); i++) transformations.get(i).apply(vec);
     }
 
     @Override
     public void applyN(Vector3 normal) {
         if (mat != null) mat.applyN(normal);
-        else
-            for (int i = 0; i < transformations.size(); i++)
-                transformations.get(i).applyN(normal);
+        else for (int i = 0; i < transformations.size(); i++) transformations.get(i).applyN(normal);
     }
 
     @Override
@@ -114,15 +112,13 @@ public class TransformationList extends Transformation {
     @Override
     @SideOnly(Side.CLIENT)
     public void glApply() {
-        for (int i = transformations.size() - 1; i >= 0; i--)
-            transformations.get(i).glApply();
+        for (int i = transformations.size() - 1; i >= 0; i--) transformations.get(i).glApply();
     }
 
     @Override
     public Transformation inverse() {
         TransformationList rev = new TransformationList();
-        for (int i = transformations.size() - 1; i >= 0; i--)
-            rev.with(transformations.get(i).inverse());
+        for (int i = transformations.size() - 1; i >= 0; i--) rev.with(transformations.get(i).inverse());
         return rev;
     }
 

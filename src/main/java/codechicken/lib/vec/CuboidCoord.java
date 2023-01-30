@@ -1,10 +1,13 @@
 package codechicken.lib.vec;
 
-import codechicken.lib.util.Copyable;
 import java.util.Iterator;
+
 import net.minecraft.util.AxisAlignedBB;
 
+import codechicken.lib.util.Copyable;
+
 public class CuboidCoord implements Iterable<BlockCoord>, Copyable<CuboidCoord> {
+
     public BlockCoord min;
     public BlockCoord max;
 
@@ -42,7 +45,7 @@ public class CuboidCoord implements Iterable<BlockCoord>, Copyable<CuboidCoord> 
 
     public CuboidCoord expand(int side, int amount) {
         if (side % 2 == 0) // negative side
-        min = min.offset(side, amount);
+            min = min.offset(side, amount);
         else max = max.offset(side, amount);
         return this;
     }
@@ -125,7 +128,9 @@ public class CuboidCoord implements Iterable<BlockCoord>, Copyable<CuboidCoord> 
 
     public Vector3 getCenterVec() {
         return new Vector3(
-                min.x + (max.x - min.x + 1) / 2D, min.y + (max.y - min.y + 1) / 2D, min.z + (max.z - min.z + 1) / 2D);
+                min.x + (max.x - min.x + 1) / 2D,
+                min.y + (max.y - min.y + 1) / 2D,
+                min.z + (max.z - min.z + 1) / 2D);
     }
 
     public BlockCoord getCenter(BlockCoord store) {
@@ -142,7 +147,7 @@ public class CuboidCoord implements Iterable<BlockCoord>, Copyable<CuboidCoord> 
     }
 
     public int[] intArray() {
-        return new int[] {min.x, min.y, min.z, max.x, max.y, max.z};
+        return new int[] { min.x, min.y, min.z, max.x, max.y, max.z };
     }
 
     public CuboidCoord copy() {
@@ -197,6 +202,7 @@ public class CuboidCoord implements Iterable<BlockCoord>, Copyable<CuboidCoord> 
 
     public Iterator<BlockCoord> iterator() {
         return new Iterator<BlockCoord>() {
+
             BlockCoord b = null;
 
             public boolean hasNext() {

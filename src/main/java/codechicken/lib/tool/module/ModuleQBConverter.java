@@ -2,22 +2,19 @@ package codechicken.lib.tool.module;
 
 import static java.util.Arrays.asList;
 
-import codechicken.lib.render.QBImporter;
 import java.io.File;
+
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
+import codechicken.lib.render.QBImporter;
 
 public class ModuleQBConverter extends JOptModule {
+
     public ModuleQBConverter() {
         parser.acceptsAll(asList("?", "h", "help"), "Show the help");
         parser.acceptsAll(asList("i", "input"), "comma separated list of paths to models (.qb or directories)")
-                .withRequiredArg()
-                .ofType(File.class)
-                .withValuesSeparatedBy(',')
-                .required();
-        parser.acceptsAll(asList("o", "out"), "Output Directory")
-                .withRequiredArg()
-                .ofType(File.class);
+                .withRequiredArg().ofType(File.class).withValuesSeparatedBy(',').required();
+        parser.acceptsAll(asList("o", "out"), "Output Directory").withRequiredArg().ofType(File.class);
         parser.acceptsAll(
                 asList("o2", "textureplanes"),
                 "2nd level optimisation. Merges coplanar polygons. Increases texture size");

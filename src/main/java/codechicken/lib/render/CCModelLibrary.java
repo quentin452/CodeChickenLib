@@ -5,6 +5,7 @@ import static codechicken.lib.math.MathHelper.phi;
 import codechicken.lib.vec.*;
 
 public class CCModelLibrary {
+
     public static CCModel icosahedron4;
     public static CCModel icosahedron7;
 
@@ -68,20 +69,12 @@ public class CCModelLibrary {
         icosahedron7.computeNormals().smoothNormals();
     }
 
-    private static void addIcosahedronTriangle(
-            Vector3 vec1,
-            double u1,
-            double v1,
-            Vector3 vec2,
-            double u2,
-            double v2,
-            Vector3 vec3,
-            double u3,
-            double v3) {
+    private static void addIcosahedronTriangle(Vector3 vec1, double u1, double v1, Vector3 vec2, double u2, double v2,
+            Vector3 vec3, double u3, double v3) {
         icosahedron4.verts[i * 3] = icosahedron7.verts[i * 4] = new Vertex5(vec1, u1, v1);
         icosahedron4.verts[i * 3 + 1] = icosahedron7.verts[i * 4 + 1] = new Vertex5(vec2, u2, v2);
-        icosahedron4.verts[i * 3 + 2] =
-                icosahedron7.verts[i * 4 + 2] = icosahedron7.verts[i * 4 + 3] = new Vertex5(vec3, u3, v3);
+        icosahedron4.verts[i * 3
+                + 2] = icosahedron7.verts[i * 4 + 2] = icosahedron7.verts[i * 4 + 3] = new Vertex5(vec3, u3, v3);
         i++;
     }
 
