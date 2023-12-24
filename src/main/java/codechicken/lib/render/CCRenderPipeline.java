@@ -1,13 +1,37 @@
 package codechicken.lib.render;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 import codechicken.lib.render.CCRenderState.IVertexOperation;
 import codechicken.lib.render.CCRenderState.VertexAttribute;
 
+@SuppressWarnings("ForLoopReplaceableByForEach")
 public class CCRenderPipeline {
 
+    private final CCRenderState renderState;
+    private final PipelineBuilder builder;
+
+    public CCRenderPipeline(CCRenderState renderState) {
+        this.renderState = renderState;
+        builder = new PipelineBuilder(renderState);
+    }
+
+    public CCRenderPipeline() {
+        this(CCRenderState.instance());
+    }
+
     public class PipelineBuilder {
+
+        private final CCRenderState renderState;
+
+        public PipelineBuilder(CCRenderState renderState) {
+            this.renderState = renderState;
+        }
+
+        public PipelineBuilder() {
+            this(CCRenderState.instance());
+        }
 
         public PipelineBuilder add(IVertexOperation op) {
             ops.add(op);
@@ -15,7 +39,7 @@ public class CCRenderPipeline {
         }
 
         public PipelineBuilder add(IVertexOperation... ops) {
-            for (int i = 0; i < ops.length; i++) CCRenderPipeline.this.ops.add(ops[i]);
+            Collections.addAll(CCRenderPipeline.this.ops, ops);
             return this;
         }
 
@@ -25,13 +49,13 @@ public class CCRenderPipeline {
 
         public void render() {
             rebuild();
-            CCRenderState.render();
+            renderState.render();
         }
     }
 
     private class PipelineNode {
 
-        public ArrayList<PipelineNode> deps = new ArrayList<PipelineNode>();
+        public ArrayList<PipelineNode> deps = new ArrayList<>();
         public IVertexOperation op;
 
         public void add() {
@@ -44,12 +68,11 @@ public class CCRenderPipeline {
         }
     }
 
-    private ArrayList<VertexAttribute> attribs = new ArrayList<VertexAttribute>();
-    private ArrayList<IVertexOperation> ops = new ArrayList<IVertexOperation>();
-    private ArrayList<PipelineNode> nodes = new ArrayList<PipelineNode>();
-    private ArrayList<IVertexOperation> sorted = new ArrayList<IVertexOperation>();
+    private final ArrayList<VertexAttribute> attribs = new ArrayList<>();
+    private final ArrayList<IVertexOperation> ops = new ArrayList<>();
+    private final ArrayList<PipelineNode> nodes = new ArrayList<>();
+    private final ArrayList<IVertexOperation> sorted = new ArrayList<>();
     private PipelineNode loading;
-    private PipelineBuilder builder = new PipelineBuilder();
 
     public void setPipeline(IVertexOperation... ops) {
         this.ops.clear();
@@ -69,20 +92,20 @@ public class CCRenderPipeline {
     }
 
     public void rebuild() {
-        if (ops.isEmpty() || CCRenderState.model == null) return;
+        if (ops.isEmpty() || this.renderState.model == null) return;
 
         // ensure enough nodes for all ops
-        while (nodes.size() < CCRenderState.operationCount()) nodes.add(new PipelineNode());
+        while (nodes.size() < this.renderState.operationCount()) nodes.add(new PipelineNode());
         unbuild();
 
-        if (CCRenderState.useNormals) addAttribute(CCRenderState.normalAttrib);
-        if (CCRenderState.useColour) addAttribute(CCRenderState.colourAttrib);
-        if (CCRenderState.computeLighting) addAttribute(CCRenderState.lightingAttrib);
+        if (this.renderState.useNormals) addAttribute(this.renderState.normalAttrib);
+        if (this.renderState.useColour) addAttribute(this.renderState.colourAttrib);
+        if (this.renderState.computeLighting) addAttribute(this.renderState.lightingAttrib);
 
         for (int i = 0; i < ops.size(); i++) {
             IVertexOperation op = ops.get(i);
             loading = nodes.get(op.operationID());
-            boolean loaded = op.load();
+            boolean loaded = op.load(renderState);
             if (loaded) loading.op = op;
 
             if (op instanceof VertexAttribute) if (loaded) attribs.add((VertexAttribute) op);
@@ -109,7 +132,7 @@ public class CCRenderPipeline {
     }
 
     public void operate() {
-        for (int i = 0; i < sorted.size(); i++) sorted.get(i).operate();
+        for (int i = 0; i < sorted.size(); i++) sorted.get(i).operate(renderState);
     }
 
     public PipelineBuilder builder() {
