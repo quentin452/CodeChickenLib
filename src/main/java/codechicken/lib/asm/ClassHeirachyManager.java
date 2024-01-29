@@ -1,8 +1,6 @@
 package codechicken.lib.asm;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.*;
 
 import net.minecraft.launchwrapper.IClassTransformer;
 import net.minecraft.launchwrapper.Launch;
@@ -25,7 +23,7 @@ public class ClassHeirachyManager implements IClassTransformer {
     public static class SuperCache {
 
         String superclass;
-        public HashSet<String> parents = new HashSet<String>();
+        Set<String> parents = new TreeSet<>();
         private boolean flattened;
 
         public void add(String parent) {
@@ -35,7 +33,7 @@ public class ClassHeirachyManager implements IClassTransformer {
         public void flatten() {
             if (flattened) return;
 
-            for (String s : new ArrayList<String>(parents)) {
+            for (String s : new TreeSet<>(parents)) {
                 SuperCache c = declareClass(s);
                 if (c != null) {
                     c.flatten();
@@ -46,8 +44,8 @@ public class ClassHeirachyManager implements IClassTransformer {
         }
     }
 
-    public static HashMap<String, SuperCache> superclasses = new HashMap<String, SuperCache>();
-    private static LaunchClassLoader cl = Launch.classLoader;
+    public static Map<String, SuperCache> superclasses = new HashMap<>();
+    private static final LaunchClassLoader cl = Launch.classLoader;
 
     public static String toKey(String name) {
         if (ObfMapping.obfuscated)
@@ -72,9 +70,11 @@ public class ClassHeirachyManager implements IClassTransformer {
 
         if (name.equals(superclass)) return true;
 
-        SuperCache cache = declareClass(name);
-        if (cache == null) // just can't handle this
-            return false;
+        SuperCache cache = superclasses.get(name);
+        if (cache == null) { // just can't handle this
+            cache = declareClass(name);
+            if (cache == null) return false;
+        }
 
         cache.flatten();
         return cache.parents.contains(superclass);
@@ -89,21 +89,20 @@ public class ClassHeirachyManager implements IClassTransformer {
         try {
             byte[] bytes = cl.getClassBytes(unKey(name));
             if (bytes != null) cache = declareASM(bytes);
-        } catch (Exception e) {}
+        } catch (Exception ignored) {}
 
         if (cache != null) return cache;
 
         try {
             cache = declareReflection(name);
-        } catch (ClassNotFoundException e) {}
+        } catch (ClassNotFoundException ignored) {}
 
         return cache;
     }
 
     private static SuperCache declareReflection(String name) throws ClassNotFoundException {
         Class<?> aclass = Class.forName(name);
-
-        SuperCache cache = getOrCreateCache(name);
+        SuperCache cache = new SuperCache();
         if (aclass.isInterface()) cache.superclass = "java.lang.Object";
         else if (name.equals("java.lang.Object")) return cache;
         else cache.superclass = toKey(aclass.getSuperclass().getName());
@@ -116,9 +115,8 @@ public class ClassHeirachyManager implements IClassTransformer {
 
     private static SuperCache declareASM(byte[] bytes) {
         ClassNode node = ASMHelper.createClassNode(bytes);
-        String name = toKey(node.name);
-
-        SuperCache cache = getOrCreateCache(name);
+        toKey(node.name);
+        SuperCache cache = new SuperCache();
         cache.superclass = toKey(node.superName.replace('/', '.'));
         cache.add(cache.superclass);
         for (String iclass : node.interfaces) cache.add(toKey(iclass.replace('/', '.')));
@@ -128,17 +126,11 @@ public class ClassHeirachyManager implements IClassTransformer {
 
     @Override
     public byte[] transform(String name, String tname, byte[] bytes) {
-        if (bytes == null) return null;
+        if (bytes == null) return new byte[0];
 
         if (!superclasses.containsKey(tname)) declareASM(bytes);
 
         return bytes;
-    }
-
-    public static SuperCache getOrCreateCache(String name) {
-        SuperCache cache = superclasses.get(name);
-        if (cache == null) superclasses.put(name, cache = new SuperCache());
-        return cache;
     }
 
     public static String getSuperClass(String name, boolean runtime) {

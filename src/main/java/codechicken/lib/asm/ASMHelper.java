@@ -44,9 +44,9 @@ public class ASMHelper {
         }
     }
 
-    public static interface Acceptor {
+    public interface Acceptor {
 
-        public void accept(ClassVisitor cv) throws IOException;
+        void accept(ClassVisitor cv) throws IOException;
     }
 
     public static MethodNode findMethod(ObfMapping methodmap, ClassNode cnode) {
@@ -90,7 +90,7 @@ public class ASMHelper {
 
     public static List<TryCatchBlockNode> cloneTryCatchBlocks(Map<LabelNode, LabelNode> labelMap,
             List<TryCatchBlockNode> tcblocks) {
-        ArrayList<TryCatchBlockNode> clone = new ArrayList<TryCatchBlockNode>();
+        ArrayList<TryCatchBlockNode> clone = new ArrayList<>();
         for (TryCatchBlockNode node : tcblocks) clone.add(
                 new TryCatchBlockNode(
                         labelMap.get(node.start),
@@ -103,7 +103,7 @@ public class ASMHelper {
 
     public static List<LocalVariableNode> cloneLocals(Map<LabelNode, LabelNode> labelMap,
             List<LocalVariableNode> locals) {
-        ArrayList<LocalVariableNode> clone = new ArrayList<LocalVariableNode>(locals.size());
+        ArrayList<LocalVariableNode> clone = new ArrayList<>(locals.size());
         for (LocalVariableNode node : locals) clone.add(
                 new LocalVariableNode(
                         node.name,
@@ -172,32 +172,14 @@ public class ASMHelper {
     }
 
     public static void dump(final byte[] bytes, File file, boolean filterImportant, boolean sortLocals) {
-        dump(new Acceptor() {
-
-            @Override
-            public void accept(ClassVisitor cv) {
-                new ClassReader(bytes).accept(cv, ClassReader.EXPAND_FRAMES);
-            }
-        }, file, filterImportant, sortLocals);
+        dump(cv -> new ClassReader(bytes).accept(cv, ClassReader.EXPAND_FRAMES), file, filterImportant, sortLocals);
     }
 
     public static void dump(final InputStream is, File file, boolean filterImportant, boolean sortLocals) {
-        dump(new Acceptor() {
-
-            @Override
-            public void accept(ClassVisitor cv) throws IOException {
-                new ClassReader(is).accept(cv, ClassReader.EXPAND_FRAMES);
-            }
-        }, file, filterImportant, sortLocals);
+        dump(cv -> new ClassReader(is).accept(cv, ClassReader.EXPAND_FRAMES), file, filterImportant, sortLocals);
     }
 
     public static void dump(final ClassNode cnode, File file, boolean filterImportant, boolean sortLocals) {
-        dump(new Acceptor() {
-
-            @Override
-            public void accept(ClassVisitor cv) {
-                cnode.accept(cv);
-            }
-        }, file, filterImportant, sortLocals);
+        dump(cv -> cnode.accept(cv), file, filterImportant, sortLocals);
     }
 }

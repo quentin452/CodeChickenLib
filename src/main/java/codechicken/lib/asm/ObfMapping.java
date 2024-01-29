@@ -3,6 +3,8 @@ package codechicken.lib.asm;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.nio.charset.StandardCharsets;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -180,8 +182,8 @@ public class ObfMapping {
         public MCPRemapper() {
             File[] mappings = getConfFiles();
             try {
-                Resources.readLines(mappings[1].toURI().toURL(), Charsets.UTF_8, this);
-                Resources.readLines(mappings[2].toURI().toURL(), Charsets.UTF_8, this);
+                Resources.readLines(mappings[1].toURI().toURL(), StandardCharsets.UTF_8, this);
+                Resources.readLines(mappings[2].toURI().toURL(), StandardCharsets.UTF_8, this);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -200,7 +202,7 @@ public class ObfMapping {
         }
 
         @Override
-        public boolean processLine(String line) throws IOException {
+        public boolean processLine(String line) {
             int i = line.indexOf(',');
             String srg = line.substring(0, i);
             int i2 = i + 1;
@@ -345,8 +347,8 @@ public class ObfMapping {
 
     @Override
     public String toString() {
-        if (s_name.length() == 0) return "[" + s_owner + "]";
-        if (s_desc.length() == 0) return "[" + s_owner + "." + s_name + "]";
+        if (s_name.isEmpty()) return "[" + s_owner + "]";
+        if (s_desc.isEmpty()) return "[" + s_owner + "." + s_name + "]";
         return "[" + (isMethod() ? methodDesc() : fieldDesc()) + "]";
     }
 
@@ -359,7 +361,7 @@ public class ObfMapping {
     }
 
     public boolean isClass() {
-        return s_name.length() == 0;
+        return s_name.isEmpty();
     }
 
     public boolean isMethod() {
@@ -379,7 +381,7 @@ public class ObfMapping {
         s_owner = mapper.mapType(s_owner);
 
         if (isMethod()) s_desc = mapper.mapMethodDesc(s_desc);
-        else if (s_desc.length() > 0) s_desc = mapper.mapDesc(s_desc);
+        else if (!s_desc.isEmpty()) s_desc = mapper.mapDesc(s_desc);
 
         return this;
     }

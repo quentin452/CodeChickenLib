@@ -176,11 +176,11 @@ public class InsnListSection implements Iterable<AbstractInsnNode> {
     }
 
     public void println() {
-        System.out.println(toString());
+        System.out.println(this);
     }
 
     public HashMap<LabelNode, LabelNode> identityLabelMap() {
-        HashMap<LabelNode, LabelNode> labelMap = new HashMap<LabelNode, LabelNode>();
+        HashMap<LabelNode, LabelNode> labelMap = new HashMap<>();
         for (AbstractInsnNode insn : this) switch (insn.getType()) {
             case LABEL:
                 labelMap.put((LabelNode) insn, (LabelNode) insn);

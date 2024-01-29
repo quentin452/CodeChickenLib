@@ -24,8 +24,8 @@ public class ModularASMTransformer {
 
     public static class ClassNodeTransformerList {
 
-        List<ClassNodeTransformer> transformers = new LinkedList<ClassNodeTransformer>();
-        HashSet<ObfMapping> methodsToSort = new HashSet<ObfMapping>();
+        List<ClassNodeTransformer> transformers = new LinkedList<>();
+        HashSet<ObfMapping> methodsToSort = new HashSet<>();
 
         public void add(ClassNodeTransformer t) {
             transformers.add(t);
@@ -275,7 +275,7 @@ public class ModularASMTransformer {
         }
     }
 
-    public HashMap<String, ClassNodeTransformerList> transformers = new HashMap<String, ClassNodeTransformerList>();
+    public HashMap<String, ClassNodeTransformerList> transformers = new HashMap<>();
 
     public void add(ClassNodeTransformer t) {
         ClassNodeTransformerList list = transformers.get(t.className());
@@ -284,7 +284,7 @@ public class ModularASMTransformer {
     }
 
     public byte[] transform(String name, byte[] bytes) {
-        if (bytes == null) return null;
+        if (bytes == null) return new byte[0];
 
         ClassNodeTransformerList list = transformers.get(name);
         return list == null ? bytes : list.transform(bytes);
